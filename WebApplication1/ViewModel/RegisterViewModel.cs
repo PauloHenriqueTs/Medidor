@@ -22,5 +22,7 @@ namespace WebApplication1.ViewModel
         [DataType(DataType.Password)]
         [Compare("Password", ErrorMessage = "Your password and confirm password do not match")]
         public string ConfirmPassword { get; set; }
+        
+        
     }
 }

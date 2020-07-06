@@ -55,8 +55,8 @@ namespace WebApplication1.Controllers
         // GET: EnergyMeters/Create
         public IActionResult Create()
         {
-            ViewData["userId"] = new SelectList(_context.Users, "Id", "Id");
-            var energyMeterCreateViewModel = new EnergyMeterCreateViewModel { serialId = 3324343, energyMeterType = new EnergyMeterType() };
+            var energyMeterCreateViewModel = new EnergyMeterCreateViewModel();
+
             return View(energyMeterCreateViewModel);
         }
 
