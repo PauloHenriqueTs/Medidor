@@ -1,0 +1,22 @@
+﻿@model WebApplication1.ViewModel.EnergyMeterCreateViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<form asp-action="Create">
+    <div class="form-group">
+        @Html.LabelFor(model => model.serialId)
+        @Html.EditorFor(model => model.serialId, new { htmlAttributes = new { @class = "form-control" } })
+    </div>
+    <div class="form-group">
+        <label>Select EnergyMeter Type</label>
+        @Html.DropDownList("Energy Meter Type",
+                     new SelectList(Enum.GetValues(typeof(WebApplication1.Entities.EnergyMeterType))),
+                     "Select EnergyMeter Type",
+                     new { @class = "form-control" })
+    </div>
+    <button type="submit" class="nav-link btn btn-link text-dark">Create</button>
+</form>
