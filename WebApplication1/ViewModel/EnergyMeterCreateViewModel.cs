@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,15 +14,17 @@ namespace WebApplication1.ViewModel
     {
         public EnergyMeterCreateViewModel()
         {
-            this.serialId = 3324343;
-            this.select = "";
+            ResetSelectList();
+        }
 
-            this.EnergyTypeList = new SelectList(
-          new List<SelectListItem>
-          {
+        public void ResetSelectList()
+        {
+            EnergyTypeList = new SelectList(
+         new List<SelectListItem>
+         {
             new SelectListItem {Text = "At home", Value = "House"},
             new SelectListItem {Text = "On the pole", Value = "Pole"},
-          }, "Value", "Text");
+         }, "Value", "Text");
         }
 
         [Required]
@@ -30,9 +33,15 @@ namespace WebApplication1.ViewModel
         [Required]
         public SelectList EnergyTypeList { get; set; }
 
-        public List<MeterOfPole> meterOfPoles { get; set; }
+        
+        public List<MeterOfPoleDto> meterOfPoles { get; set; }
 
         [DisplayName("Select Type")]
-        public string select { get; set; }
+        public string Select { get; set; }
+    }
+
+    public class MeterOfPoleDto
+    {
+        public int meterSerialId { get; set; }
     }
 }

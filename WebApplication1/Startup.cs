@@ -33,6 +33,7 @@ namespace WebApplication1
                     Configuration.GetConnectionString("DefaultConnection")));
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+            
             services.AddControllersWithViews();
             services.AddRazorPages();
         }

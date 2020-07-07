@@ -7,7 +7,8 @@
 
 <h1>Create</h1>
 
-<form asp-action="Create" id="CreateForm">
+@using (@Html.BeginForm("Create", "EnergyMeters", FormMethod.Post))
+{
     <div class="form-group">
         @Html.LabelFor(model => model.serialId)
         @Html.EditorFor(model => model.serialId, new { htmlAttributes = new { @class = "form-control" } })
@@ -16,32 +17,60 @@
         <label>Select EnergyMeter Type</label>
         @Html.DropDownList("EnergyMeterType", Model.EnergyTypeList, "Default label", new { @class = "form-control" })
     </div>
-    <div id="poleMeters">
-        <div class="form-group" id="#meterOfPole">
+    <div class="form-group" id="meterOfPoles">
+        <div class="form-group" id="listMeter">
+            <input type="number" id="meterOfPoles_0__meterSerialId" name="meterOfPoles[0].meterSerialId" value="">
         </div>
-
-        <button class="btn text-dark" id="addPoleMeter">Add</button>
+        <button type="button" id="AddMeterBtn">Add</button>
     </div>
-    <button type="submit" class="nav-link btn btn-link text-dark">Create</button>
-</form>
+    <input type="hidden" id="Select" name="Select" />
+
+    <input type="submit" value="Create" class="btn btn-primary" id="SubmitBtn" />
+    @Html.AntiForgeryToken()
+}
 
 @section Scripts {
     <script>
         $(document).ready(function () {
-            $("#poleMeters").hide();
+            var i = 1;
+            $("#meterOfPoles").hide()
+            $("#SubmitBtn").click(submit);
+            $("#AddMeterBtn").click(addMeter);
             $("#EnergyMeterType").change(function () {
-                var select = $("#EnergyMeterType").val();
-                $("#selectValue").text(select);
-                if (select === "Pole") {
-                    $("#poleMeters").show();
+
+                if ($("#EnergyMeterType").val() === "Pole") {
+
+                    $("#meterOfPoles").show()
                 } else {
-                    $("#poleMeters").hide();
+                    $("#meterOfPoles").hide()
                 }
+            })
+            function addMeter() {
+                var raw = ` <input type="number"  id="meterOfPoles_${i}__meterSerialId" name="meterOfPoles[${i}].meterSerialId" value="">`
+                i++;
+                $("#listMeter").append(raw)
+            }
+            function submit() {
+                var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+                $("#Select").val($("#EnergyMeterType").val());
+
+                $.ajax({
+                    headers: {
+                        'RequestVerificationToken': antiForgeryToken
+                },
+                type: "POST",
+                url: "@Url.Action("Create", "EnergyMeters")",
+                traditional: true,
+                dataType: 'json',
+                    contentType: 'application/x-www-form-urlencoded; charset=utf-8',
+                    data: $("form").serialize(),
+                success: function (data) { console.log(data) },
+                error: function (data) { console.log(data) }
             });
-            $("#addPoleMeter").click(function () {
-                $("#meterOfPole")
-            });
-        })
+        }
+
+        });
     </script>
+
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

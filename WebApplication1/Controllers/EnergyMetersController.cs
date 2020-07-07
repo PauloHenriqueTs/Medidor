@@ -14,7 +14,6 @@ using WebApplication1.ViewModel;
 
 namespace WebApplication1.Controllers
 {
-    [Authorize]
     public class EnergyMetersController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -55,7 +54,16 @@ namespace WebApplication1.Controllers
         // GET: EnergyMeters/Create
         public IActionResult Create()
         {
-            var energyMeterCreateViewModel = new EnergyMeterCreateViewModel();
+            var energyMeterCreateViewModel = new EnergyMeterCreateViewModel
+            {
+                serialId = 3333,
+                Select = "",
+                meterOfPoles = new List<MeterOfPoleDto>
+                {
+                    new MeterOfPoleDto{meterSerialId=14343},
+                     new MeterOfPoleDto{meterSerialId=33332}
+                }
+            };
 
             return View(energyMeterCreateViewModel);
         }
@@ -65,14 +73,24 @@ namespace WebApplication1.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(EnergyMeterCreateViewModel energyMeterCreateViewModel)
+        public async Task<IActionResult> Create( EnergyMeterCreateViewModel energyMeterCreateViewModel)
         {
             if (ModelState.IsValid)
+
             {
                 var userId = _userManager.GetUserId(User);
             }
-
-            return View();
+            energyMeterCreateViewModel = new EnergyMeterCreateViewModel
+            {
+                serialId = 3333,
+                Select = "",
+                meterOfPoles = new List<MeterOfPoleDto>
+                {
+                    new MeterOfPoleDto{meterSerialId=14343},
+                     new MeterOfPoleDto{meterSerialId=33332}
+                }
+            };
+            return View(energyMeterCreateViewModel);
         }
 
         // GET: EnergyMeters/Edit/5
