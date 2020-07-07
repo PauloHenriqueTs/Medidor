@@ -26,9 +26,9 @@ namespace WebApplication1.Data
                .WithMany(u => u.EnergyMeters)
                .HasForeignKey(e => e.userId);
 
-            modelBuilder.Entity<EnergyMeter>()
-                .HasMany(e => e.meterOfPoleEnergyMeter)
-                .WithOne(p => p.poleMeter)
+            modelBuilder.Entity<MeterOfPole>()
+                .HasOne(m => m.poleMeter)
+                .WithMany(p => p.EnergyMeters)
                 .HasForeignKey(m => m.poleSerialId);
         }
     }
