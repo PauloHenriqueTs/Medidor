@@ -31,5 +31,11 @@ namespace WebApplication1.Entities
         public TypeOfEnergyMeter Type { get; private set; }
 
         public List<MeterOfPole>? Meters { get; private set; }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is EnergyMeter meter &&
+                   SerialId == meter.SerialId;
+        }
     }
 }

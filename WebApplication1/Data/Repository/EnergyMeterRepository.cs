@@ -23,7 +23,7 @@ namespace WebApplication1.Data.Repository
             if (energyMeter.Type == TypeOfEnergyMeter.House)
             {
                 var meter = new HouseEnergyMeter(energyMeter.SerialId, energyMeter.UserId);
-                var meterExist = await _dbContext.HouseEnergyMeters.FirstAsync(m => m.SerialId == meter.SerialId);
+                var meterExist = await _dbContext.HouseEnergyMeters.FirstOrDefaultAsync(m => m.SerialId == meter.SerialId);
                 if (meterExist == null)
                 {
                     await _dbContext.HouseEnergyMeters.AddAsync(meter);
