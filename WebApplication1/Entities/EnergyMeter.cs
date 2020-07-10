@@ -7,47 +7,29 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApplication1.ValueObjects;
 using WebApplication1.ViewModel;
+
+#nullable enable
 
 namespace WebApplication1.Entities
 {
     public class EnergyMeter
     {
-        public EnergyMeter()
+        public EnergyMeter(string serialId, string userId, TypeOfEnergyMeter type, List<MeterOfPole> meters)
         {
+            SerialId = serialId;
+            UserId = userId;
+            Type = type;
+            Meters = meters;
         }
 
-        public static EnergyMeter Create(ApplicationUser u, EnergyMeterCreateViewModel model)
-        {
-            var energymeter = new EnergyMeter();
-            energymeter.serialId = model.serialId;
-            energymeter.user = u;
-            energymeter.userId = u.Id;
-            energymeter.Type = model.Select;
-            if (model.Select == "Pole")
-            {
-                energymeter.EnergyMeters = new List<MeterOfPole>();
-                foreach (var item in model.meterOfPoles)
-                {
-                    energymeter.EnergyMeters.Add(MeterOfPole.Create(model.serialId, item.meterSerialId, energymeter));
-                }
-            }
-            return energymeter;
-        }
+        public string SerialId { get; private set; }
 
-        [Key]
-        public int serialId { get; private set; }
+        public string UserId { get; private set; }
 
-        public ApplicationUser user { get; set; }
+        public TypeOfEnergyMeter Type { get; private set; }
 
-        public string userId { get; set; }
-
-        public string Type { get; set; }
-
-        [AllowNull]
-        [Column]
-        public List<MeterOfPole> EnergyMeters { get; set; }
-
-        
+        public List<MeterOfPole>? Meters { get; private set; }
     }
 }

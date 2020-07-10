@@ -28,7 +28,7 @@ namespace WebApplication1.ViewModel
         }
 
         [Required]
-        public int serialId { get; set; }
+        public string serialId { get; set; }
 
         [Required]
         public SelectList EnergyTypeList { get; set; }
@@ -42,6 +42,6 @@ namespace WebApplication1.ViewModel
 
     public class MeterOfPoleDto
     {
-        public int meterSerialId { get; set; }
+        public string meterSerialId { get; set; }
     }
 }

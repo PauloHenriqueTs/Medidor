@@ -1,10 +1,9 @@
 ﻿using System;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace WebApplication1.Data.Migrations
+namespace WebApplication1.Migrations
 {
-    public partial class CreateIdentitySchema : Migration
+    public partial class test : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -48,11 +47,35 @@ namespace WebApplication1.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "HouseEnergyMeters",
+                columns: table => new
+                {
+                    SerialId = table.Column<string>(nullable: false),
+                    UserId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_HouseEnergyMeters", x => x.SerialId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PoleEnergyMeters",
+                columns: table => new
+                {
+                    SerialId = table.Column<string>(nullable: false),
+                    UserId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PoleEnergyMeters", x => x.SerialId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     RoleId = table.Column<string>(nullable: false),
                     ClaimType = table.Column<string>(nullable: true),
                     ClaimValue = table.Column<string>(nullable: true)
@@ -73,7 +96,7 @@ namespace WebApplication1.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<string>(nullable: false),
                     ClaimType = table.Column<string>(nullable: true),
                     ClaimValue = table.Column<string>(nullable: true)
@@ -153,6 +176,24 @@ namespace WebApplication1.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "MeterOfPoleEnergyMeters",
+                columns: table => new
+                {
+                    MeterId = table.Column<string>(nullable: false),
+                    PoleEnergyMeterId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MeterOfPoleEnergyMeters", x => x.MeterId);
+                    table.ForeignKey(
+                        name: "FK_MeterOfPoleEnergyMeters_PoleEnergyMeters_PoleEnergyMeterId",
+                        column: x => x.PoleEnergyMeterId,
+                        principalTable: "PoleEnergyMeters",
+                        principalColumn: "SerialId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -191,6 +232,11 @@ namespace WebApplication1.Data.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MeterOfPoleEnergyMeters_PoleEnergyMeterId",
+                table: "MeterOfPoleEnergyMeters",
+                column: "PoleEnergyMeterId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -211,10 +257,19 @@ namespace WebApplication1.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "HouseEnergyMeters");
+
+            migrationBuilder.DropTable(
+                name: "MeterOfPoleEnergyMeters");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "PoleEnergyMeters");
         }
     }
 }
