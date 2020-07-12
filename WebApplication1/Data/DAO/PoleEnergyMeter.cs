@@ -14,6 +14,7 @@ namespace WebApplication1.Data.DAO
         {
             SerialId = serialId;
             UserId = userId;
+            MeterOfPoleEnergyMeters = new List<MeterOfPoleEnergyMeter>();
             foreach (var item in meterOfPoles)
             {
                 MeterOfPoleEnergyMeters.Add(new MeterOfPoleEnergyMeter(item.MeterId, serialId, this));
@@ -37,6 +38,7 @@ namespace WebApplication1.Data.DAO
 
         [Key]
         public string SerialId { get; set; }
+
 
         public string UserId { get; set; }
 

@@ -29,6 +29,7 @@ namespace WebApplication1.Data.DAO
         [Key]
         public string SerialId { get; set; }
 
+
         public string UserId { get; set; }
     }
 }
