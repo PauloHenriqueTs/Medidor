@@ -18,13 +18,17 @@ namespace WebApplication1.ViewModel
             ResetSelectList();
             serialId = Guid.Parse(energyMeter.SerialId);
             Select = energyMeter.Type.ToString();
-            if (energyMeter.Meters.Any())
+            if (energyMeter.Type == TypeOfEnergyMeter.Pole)
             {
                 meterOfPoles = new List<MeterOfPoleDto>();
-                foreach (var item in energyMeter.Meters)
+                if (energyMeter.Meters.Any())
                 {
-                    meterOfPoles.Add(new MeterOfPoleDto { meterSerialId = item.MeterId });
+                    foreach (var item in energyMeter.Meters)
+                    {
+                        meterOfPoles.Add(new MeterOfPoleDto { meterSerialId = item.MeterId });
+                    }
                 }
+                meterOfPoles.Add(new MeterOfPoleDto { meterSerialId = "0" });
             }
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApplication1.Entities;
@@ -36,12 +37,14 @@ namespace WebApplication1.Data.DAO
             return new EnergyMeter(this.SerialId, this.UserId, TypeOfEnergyMeter.Pole, list);
         }
 
-        [Key]
-        public string SerialId { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int PoleEnergyMeterId { get; set; }
 
+        public string SerialId { get; set; }
 
         public string UserId { get; set; }
 
+        [Required]
         public List<MeterOfPoleEnergyMeter> MeterOfPoleEnergyMeters { get; set; }
     }
 }

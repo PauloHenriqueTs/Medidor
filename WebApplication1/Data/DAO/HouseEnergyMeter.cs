@@ -26,9 +26,11 @@ namespace WebApplication1.Data.DAO
             return new EnergyMeter(this.SerialId, this.UserId, TypeOfEnergyMeter.House, null);
         }
 
-        [Key]
-        public string SerialId { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int HouseEnergyMeterId { get; set; }
 
+      
+        public string SerialId { get; set; }
 
         public string UserId { get; set; }
     }

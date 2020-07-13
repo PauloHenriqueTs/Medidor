@@ -70,7 +70,7 @@ namespace WebApplication1.Controllers
             var newMeter = energyMeterCreateViewModel.toEnergyMeter(userId);
             await repository.Create(newMeter);
 
-            return Redirect("GetAll");
+            return Json(new { redirectToUrl = Url.Action("GetAll", "EnergyMeters") });
         }
 
         public async Task<IActionResult> GetAll()

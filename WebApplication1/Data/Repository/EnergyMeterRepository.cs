@@ -20,24 +20,26 @@ namespace WebApplication1.Data.Repository
 
         public async Task Create(EnergyMeter energyMeter)
         {
-            if (energyMeter.Type == TypeOfEnergyMeter.House)
+            var meterExist = await _dbContext.PoleEnergyMeters.Include(meters => meters.MeterOfPoleEnergyMeters).FirstOrDefaultAsync(m => m.SerialId == energyMeter.SerialId);
+            var MeterExist = await _dbContext.HouseEnergyMeters.FirstOrDefaultAsync(m => m.SerialId == energyMeter.SerialId);
+            if (meterExist == null && MeterExist == null)
             {
-                var meter = new HouseEnergyMeter(energyMeter.SerialId, energyMeter.UserId);
-                var meterExist = await _dbContext.HouseEnergyMeters.FirstOrDefaultAsync(m => m.SerialId == meter.SerialId);
-                if (meterExist == null)
+                if (energyMeter.Type == TypeOfEnergyMeter.House)
                 {
+                    var meter = new HouseEnergyMeter(energyMeter.SerialId, energyMeter.UserId);
+
                     await _dbContext.HouseEnergyMeters.AddAsync(meter);
                     await _dbContext.SaveChangesAsync();
                 }
-            }
-            else if (energyMeter.Type == TypeOfEnergyMeter.Pole)
-            {
-                var meter = new PoleEnergyMeter(energyMeter.SerialId, energyMeter.UserId, energyMeter.Meters);
-                var meterExist = await _dbContext.PoleEnergyMeters.Include(meters => meters.MeterOfPoleEnergyMeters).FirstOrDefaultAsync(m => m.SerialId == meter.SerialId);
-                if (meterExist == null)
+                else if (energyMeter.Type == TypeOfEnergyMeter.Pole)
                 {
-                    await _dbContext.PoleEnergyMeters.AddAsync(meter);
-                    await _dbContext.SaveChangesAsync();
+                    var meter = new PoleEnergyMeter(energyMeter.SerialId, energyMeter.UserId, energyMeter.Meters);
+
+                    if (meterExist == null)
+                    {
+                        await _dbContext.PoleEnergyMeters.AddAsync(meter);
+                        await _dbContext.SaveChangesAsync();
+                    }
                 }
             }
         }

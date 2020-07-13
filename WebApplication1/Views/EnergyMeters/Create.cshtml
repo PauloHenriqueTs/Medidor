@@ -7,8 +7,7 @@
 
 <h1>Create</h1>
 
-@using (@Html.BeginForm("Create", "EnergyMeters", FormMethod.Post))
-{
+<form>
     @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 
     <div class="form-group">
@@ -30,14 +29,14 @@
     <input type="submit" value="Create" class="btn btn-primary" id="SubmitBtn" />
 
     @Html.AntiForgeryToken()
-}
+</form>
 
 @section Scripts {
     <script>
         $(document).ready(function () {
             var i = 1;
             $("#meterOfPoles").hide()
-            $("#SubmitBtn").click(submit);
+            $("form").submit(submit);
             $("#AddMeterBtn").click(addMeter);
             $("#EnergyMeterType").change(function () {
                 if ($("#EnergyMeterType").val() === "Pole") {
@@ -51,7 +50,9 @@
                 i++;
                 $("#listMeter").append(raw)
             }
-            function submit() {
+            function submit(event) {
+                event.preventDefault();
+               
                 var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
                 $("#Select").val($("#EnergyMeterType").val());
                 $.ajax({
@@ -64,7 +65,7 @@
                 dataType: 'json',
                     contentType: 'application/x-www-form-urlencoded; charset=utf-8',
                     data: $("form").serialize(),
-                success: function (data) { console.log(data) },
+                    success: function (data) { window.location.href = data.redirectToUrl },
                 error: function (data) { console.log(data) }
             });
         }

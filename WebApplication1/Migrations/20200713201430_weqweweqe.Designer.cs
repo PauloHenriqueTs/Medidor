@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApplication1.Data;
 
 namespace WebApplication1.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200713201430_weqweweqe")]
+    partial class weqweweqe
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -156,18 +158,13 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("WebApplication1.Data.DAO.HouseEnergyMeter", b =>
                 {
-                    b.Property<int>("HouseEnergyMeterId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
                     b.Property<string>("SerialId")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("HouseEnergyMeterId");
+                    b.HasKey("SerialId");
 
                     b.ToTable("HouseEnergyMeters");
                 });
@@ -183,32 +180,24 @@ namespace WebApplication1.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PoleEnergyMeterId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("PoleEnergyMeterId1")
-                        .HasColumnType("int");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("MeterOfPoleEnergyMeterId");
 
-                    b.HasIndex("PoleEnergyMeterId1");
+                    b.HasIndex("PoleEnergyMeterId");
 
                     b.ToTable("MeterOfPoleEnergyMeters");
                 });
 
             modelBuilder.Entity("WebApplication1.Data.DAO.PoleEnergyMeter", b =>
                 {
-                    b.Property<int>("PoleEnergyMeterId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
                     b.Property<string>("SerialId")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("PoleEnergyMeterId");
+                    b.HasKey("SerialId");
 
                     b.ToTable("PoleEnergyMeters");
                 });
@@ -333,7 +322,7 @@ namespace WebApplication1.Migrations
                 {
                     b.HasOne("WebApplication1.Data.DAO.PoleEnergyMeter", "PoleEnergyMeter")
                         .WithMany("MeterOfPoleEnergyMeters")
-                        .HasForeignKey("PoleEnergyMeterId1");
+                        .HasForeignKey("PoleEnergyMeterId");
                 });
 #pragma warning restore 612, 618
         }
