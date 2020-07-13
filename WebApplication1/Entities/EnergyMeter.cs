@@ -21,7 +21,8 @@ namespace WebApplication1.Entities
             SerialId = serialId;
             UserId = userId;
             Type = type;
-            Meters = meters;
+            var removeDuplicate = meters.Distinct().ToList();
+            Meters = removeDuplicate;
         }
 
         public string SerialId { get; private set; }
@@ -36,6 +37,11 @@ namespace WebApplication1.Entities
         {
             return obj is EnergyMeter meter &&
                    SerialId == meter.SerialId;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(SerialId, UserId, Type, Meters);
         }
     }
 }

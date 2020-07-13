@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
+using WebApplication1.Data.Repository;
 using WebApplication1.Entities;
 using WebApplication1.ViewModel;
 
@@ -20,10 +21,13 @@ namespace WebApplication1.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public EnergyMetersController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        private readonly EnergyMeterRepository repository;
+
+        public EnergyMetersController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, [FromServices] EnergyMeterRepository energyMeterRepository)
         {
             _context = context;
             _userManager = userManager;
+            repository = energyMeterRepository;
         }
 
         // GET: EnergyMeters
@@ -36,15 +40,15 @@ namespace WebApplication1.Controllers
         // GET: EnergyMeters/Create
         public IActionResult Create()
         {
+            var list = new List<MeterOfPoleDto>();
+
+            list.Add(new MeterOfPoleDto { meterSerialId = "4" });
+
             var energyMeterCreateViewModel = new EnergyMeterCreateViewModel
             {
-                serialId = "333",
+                serialId = Guid.Empty,
                 Select = "",
-                meterOfPoles = new List<MeterOfPoleDto>
-                {
-                    new MeterOfPoleDto{meterSerialId="14343"},
-                     new MeterOfPoleDto{meterSerialId="33332"}
-                }
+                meterOfPoles = list
             };
 
             return View(energyMeterCreateViewModel);
@@ -55,17 +59,47 @@ namespace WebApplication1.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(EnergyMeterCreateViewModel energyMeterCreateViewModel)
+        public async Task<IActionResult> Create([FromForm] EnergyMeterCreateViewModel energyMeterCreateViewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(energyMeterCreateViewModel);
+            }
+            var userId = _userManager.GetUserId(User);
+            var newMeter = energyMeterCreateViewModel.toEnergyMeter(userId);
+            await repository.Create(newMeter);
+
+            var meters = await repository.Get(userId);
+            return View("GetAll", meters);
+        }
+
+        public async Task<IActionResult> GetAll()
         {
             var userId = _userManager.GetUserId(User);
+            var meters = await repository.Get(userId);
 
-            energyMeterCreateViewModel = new EnergyMeterCreateViewModel
+            return View(meters);
+        }
+
+        [AcceptVerbs("GET", "POST")]
+        public async Task<IActionResult> VerifySerialId(string serialId)
+        {
+            var isExist = await repository.SerialIdExist(serialId);
+            if (isExist)
             {
-                serialId = "0",
-                Select = "",
-                meterOfPoles = new List<MeterOfPoleDto>()
-            };
-            return View(energyMeterCreateViewModel);
+                return Json($"A user named {serialId}  already exists.");
+            }
+
+            return Json(true);
+        }
+
+        [HttpPost]
+        
+        public async Task<IActionResult> Delete(EnergyMeter energyMeter)
+        {
+            await repository.Delete(energyMeter);
+
+            return Redirect("GetAll");
         }
     }
 }
