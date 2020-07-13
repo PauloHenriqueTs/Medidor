@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
 using WebApplication1.Data.Repository;
 using WebApplication1.Entities;
+using WebApplication1.ValueObjects;
 using WebApplication1.ViewModel;
 
 namespace WebApplication1.Controllers
@@ -100,20 +101,14 @@ namespace WebApplication1.Controllers
             return Redirect("GetAll");
         }
 
-        public IActionResult Update()
+        public async Task<IActionResult> Update(string SerialId)
         {
-            var list = new List<MeterOfPoleDto>();
+            var userId = _userManager.GetUserId(User);
+            var meter = await repository.GetById(SerialId, userId);
 
-            list.Add(new MeterOfPoleDto { meterSerialId = "4" });
+            var model = new EnergyMeterUpdateViewModel(meter);
 
-            var energyMeterCreateViewModel = new EnergyMeterCreateViewModel
-            {
-                serialId = Guid.Empty,
-                Select = "",
-                meterOfPoles = list
-            };
-
-            return View(energyMeterCreateViewModel);
+            return View(model);
         }
 
         // POST: EnergyMeters/Create
@@ -121,14 +116,14 @@ namespace WebApplication1.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Update([FromForm] EnergyMeterCreateViewModel energyMeterCreateViewModel)
+        public async Task<IActionResult> Update([FromForm] EnergyMeterUpdateViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                return View(energyMeterCreateViewModel);
+                return View(model);
             }
             var userId = _userManager.GetUserId(User);
-            var newMeter = energyMeterCreateViewModel.toEnergyMeter(userId);
+            var newMeter = model.toEnergyMeter(userId);
             await repository.Update(newMeter);
 
             return Redirect("GetAll");

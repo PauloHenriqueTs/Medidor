@@ -59,6 +59,23 @@ namespace WebApplication1.Data.Repository
             return meters;
         }
 
+        public async Task<EnergyMeter> GetById(string SerialId, string userId)
+        {
+            List<EnergyMeter> meters = new List<EnergyMeter>();
+            var HouseMeters = await _dbContext.HouseEnergyMeters.Where(meters => meters.UserId == userId && meters.SerialId == SerialId).ToListAsync();
+            foreach (var item in HouseMeters)
+            {
+                meters.Add(item.ToEnergyMeter());
+            }
+            var PoleMeters = await _dbContext.PoleEnergyMeters.Include(meters => meters.MeterOfPoleEnergyMeters).Where(meters => meters.UserId == userId && meters.SerialId == SerialId).ToListAsync();
+            foreach (var item in PoleMeters)
+            {
+                meters.Add(item.ToEnergyMeter());
+            }
+
+            return meters.SingleOrDefault();
+        }
+
         public async Task Delete(EnergyMeter energyMeter)
         {
             if (energyMeter.Type == TypeOfEnergyMeter.House)
@@ -123,14 +140,12 @@ namespace WebApplication1.Data.Repository
             {
                 return true;
             }
-
             else if (HouseMeterExist != null)
             {
                 return true;
             }
 
             return false;
-
         }
 
         public async Task Update(EnergyMeter energyMeter)
@@ -151,7 +166,6 @@ namespace WebApplication1.Data.Repository
                 await _dbContext.HouseEnergyMeters.AddAsync(meter);
                 await _dbContext.SaveChangesAsync();
             }
-
             else if (energyMeter.Type == TypeOfEnergyMeter.Pole)
             {
                 var meter = new PoleEnergyMeter(energyMeter.SerialId, energyMeter.UserId, energyMeter.Meters);
@@ -167,14 +181,7 @@ namespace WebApplication1.Data.Repository
                 }
                 await _dbContext.PoleEnergyMeters.AddAsync(meter);
                 await _dbContext.SaveChangesAsync();
-
             }
-
-
-
-
         }
-
-
     }
 }
