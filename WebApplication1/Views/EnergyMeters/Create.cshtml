@@ -36,7 +36,7 @@
         $(document).ready(function () {
             var i = 1;
             $("#meterOfPoles").hide()
-            $("form").submit(submit);
+            $("#SubmitBtn").click(submit);
             $("#AddMeterBtn").click(addMeter);
             $("#EnergyMeterType").change(function () {
                 if ($("#EnergyMeterType").val() === "Pole") {
@@ -52,7 +52,7 @@
             }
             function submit(event) {
                 event.preventDefault();
-               
+
                 var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
                 $("#Select").val($("#EnergyMeterType").val());
                 $.ajax({

@@ -62,6 +62,7 @@ namespace WebApplication1.ViewModel
     }
     public class MeterOfPoleDto
     {
+        [Required]
         public string meterSerialId { get; set; }
     }
 

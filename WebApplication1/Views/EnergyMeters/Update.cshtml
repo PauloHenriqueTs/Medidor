@@ -1,18 +1,18 @@
 ﻿@model WebApplication1.ViewModel.EnergyMeterUpdateViewModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Update";
 
 }
 
 <h1>Update</h1>
 
-@using (@Html.BeginForm("Create", "EnergyMeters", FormMethod.Post))
-{
+<form>
+
     @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 
     <div class="form-group">
-        @Html.LabelFor(model => model.serialId)
+        @Model.serialId
         @Html.EditorFor(model => model.serialId, new { htmlAttributes = new { @class = "form-control", @type = "hidden" } })
     </div>
     <div class="form-group">
@@ -28,9 +28,7 @@
     <input type="hidden" id="Select" name="Select" />
 
     <input type="submit" value="Create" class="btn btn-primary" id="SubmitBtn" />
-
-    @Html.AntiForgeryToken()
-}
+</form>
 
 @section Scripts {
     <script>
@@ -52,19 +50,20 @@
                 $("#listMeter").append(raw)
             }
             function submit() {
+                event.preventDefault();
                 var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
                 $("#Select").val($("#EnergyMeterType").val());
                 $.ajax({
                     headers: {
                         'RequestVerificationToken': antiForgeryToken
                 },
-                type: "POST",
-                url: "@Url.Action("Create", "EnergyMeters")",
+                type: "PUT",
+                url: "@Url.Action("Update", "EnergyMeters")",
                 traditional: true,
                 dataType: 'json',
                     contentType: 'application/x-www-form-urlencoded; charset=utf-8',
                     data: $("form").serialize(),
-                success: function (data) { console.log(data) },
+                    success: function (data) { window.location.href = data.redirectToUrl },
                 error: function (data) { console.log(data) }
             });
         }

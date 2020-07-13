@@ -122,7 +122,7 @@ namespace WebApplication1.Data.Repository
                 _dbContext.HouseEnergyMeters.Remove(meterExist);
                 await _dbContext.SaveChangesAsync();
             }
-            var MeterExist = await _dbContext.PoleEnergyMeters.FirstOrDefaultAsync(m => m.SerialId == serialId.ToString());
+            var MeterExist = await _dbContext.PoleEnergyMeters.Include(meter => meter.MeterOfPoleEnergyMeters).FirstOrDefaultAsync(m => m.SerialId == serialId.ToString());
             if (MeterExist != null)
             {
                 if (_dbContext.Entry(MeterExist).State == EntityState.Detached)

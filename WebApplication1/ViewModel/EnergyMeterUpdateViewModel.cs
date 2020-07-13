@@ -18,18 +18,21 @@ namespace WebApplication1.ViewModel
             ResetSelectList();
             serialId = Guid.Parse(energyMeter.SerialId);
             Select = energyMeter.Type.ToString();
-            if (energyMeter.Type == TypeOfEnergyMeter.Pole)
+
+            meterOfPoles = new List<MeterOfPoleDto>();
+            if (energyMeter.Meters != null && energyMeter.Meters.Any())
             {
-                meterOfPoles = new List<MeterOfPoleDto>();
-                if (energyMeter.Meters.Any())
+                foreach (var item in energyMeter.Meters)
                 {
-                    foreach (var item in energyMeter.Meters)
-                    {
-                        meterOfPoles.Add(new MeterOfPoleDto { meterSerialId = item.MeterId });
-                    }
+                    meterOfPoles.Add(new MeterOfPoleDto { meterSerialId = item.MeterId });
                 }
-                meterOfPoles.Add(new MeterOfPoleDto { meterSerialId = "0" });
             }
+            meterOfPoles.Add(new MeterOfPoleDto { meterSerialId = "0" });
+        }
+
+        public EnergyMeterUpdateViewModel()
+        {
+            ResetSelectList();
         }
 
         public void ResetSelectList()
@@ -61,7 +64,7 @@ namespace WebApplication1.ViewModel
         }
 
         [Required]
-        public Guid serialId { get; private set; }
+        public Guid serialId { get; set; }
 
         [Required]
         public SelectList EnergyTypeList { get; set; }

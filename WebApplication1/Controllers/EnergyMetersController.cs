@@ -114,7 +114,7 @@ namespace WebApplication1.Controllers
         // POST: EnergyMeters/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPut]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Update([FromForm] EnergyMeterUpdateViewModel model)
         {
@@ -126,7 +126,7 @@ namespace WebApplication1.Controllers
             var newMeter = model.toEnergyMeter(userId);
             await repository.Update(newMeter);
 
-            return Redirect("GetAll");
+            return Json(new { redirectToUrl = Url.Action("GetAll", "EnergyMeters") });
         }
     }
 }
