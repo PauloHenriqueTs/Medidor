@@ -1,0 +1,75 @@
+﻿@model WebApplication1.ViewModel.EnergyMeterCreateViewModel
+
+@{
+    ViewData["Title"] = "Create";
+
+}
+
+<h1>Update</h1>
+
+@using (@Html.BeginForm("Create", "EnergyMeters", FormMethod.Post))
+{
+    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.serialId)
+        @Html.EditorFor(model => model.serialId, new { htmlAttributes = new { @class = "form-control" } })
+    </div>
+    <div class="form-group">
+        <label>Select EnergyMeter Type</label>
+        @Html.DropDownList("EnergyMeterType", Model.EnergyTypeList, "Default label", new { @class = "form-control" })
+    </div>
+    <div class="form-group" id="meterOfPoles">
+        <div class="form-group" id="listMeter">
+            @Html.EditorFor(model => model.meterOfPoles[0].meterSerialId, new { htmlAttributes = new { @class = "form-control" } })
+        </div>
+        <button type="button" id="AddMeterBtn" class="btn ">Add</button>
+    </div>
+    <input type="hidden" id="Select" name="Select" />
+
+    <input type="submit" value="Create" class="btn btn-primary" id="SubmitBtn" />
+
+    @Html.AntiForgeryToken()
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var i = 1;
+            $("#meterOfPoles").hide()
+            $("#SubmitBtn").click(submit);
+            $("#AddMeterBtn").click(addMeter);
+            $("#EnergyMeterType").change(function () {
+                if ($("#EnergyMeterType").val() === "Pole") {
+                    $("#meterOfPoles").show()
+                } else {
+                    $("#meterOfPoles").hide()
+                }
+            })
+            function addMeter() {
+                var raw = ` <input type="string" class = "form-control" id="meterOfPoles_${i}__meterSerialId" name="meterOfPoles[${i}].meterSerialId" value="">`
+                i++;
+                $("#listMeter").append(raw)
+            }
+            function submit() {
+                var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+                $("#Select").val($("#EnergyMeterType").val());
+                $.ajax({
+                    headers: {
+                        'RequestVerificationToken': antiForgeryToken
+                },
+                type: "POST",
+                url: "@Url.Action("Create", "EnergyMeters")",
+                traditional: true,
+                dataType: 'json',
+                    contentType: 'application/x-www-form-urlencoded; charset=utf-8',
+                    data: $("form").serialize(),
+                success: function (data) { console.log(data) },
+                error: function (data) { console.log(data) }
+            });
+        }
+        });
+    </script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -91,6 +91,30 @@ namespace WebApplication1.Data.Repository
             }
         }
 
+        public async Task DeleteById(Guid serialId)
+        {
+            var meterExist = await _dbContext.HouseEnergyMeters.FirstOrDefaultAsync(m => m.SerialId == serialId.ToString());
+            if (meterExist != null)
+            {
+                if (_dbContext.Entry(meterExist).State == EntityState.Detached)
+                {
+                    _dbContext.HouseEnergyMeters.Attach(meterExist);
+                }
+                _dbContext.HouseEnergyMeters.Remove(meterExist);
+                await _dbContext.SaveChangesAsync();
+            }
+            var MeterExist = await _dbContext.PoleEnergyMeters.FirstOrDefaultAsync(m => m.SerialId == serialId.ToString());
+            if (MeterExist != null)
+            {
+                if (_dbContext.Entry(MeterExist).State == EntityState.Detached)
+                {
+                    _dbContext.PoleEnergyMeters.Attach(MeterExist);
+                }
+                _dbContext.PoleEnergyMeters.Remove(MeterExist);
+                await _dbContext.SaveChangesAsync();
+            }
+        }
+
         public async Task<bool> SerialIdExist(string SerialId)
         {
             var PoleMeterExist = await _dbContext.PoleEnergyMeters.Include(meters => meters.MeterOfPoleEnergyMeters).FirstOrDefaultAsync(m => m.SerialId == SerialId);

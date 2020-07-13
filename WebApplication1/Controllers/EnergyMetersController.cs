@@ -69,8 +69,7 @@ namespace WebApplication1.Controllers
             var newMeter = energyMeterCreateViewModel.toEnergyMeter(userId);
             await repository.Create(newMeter);
 
-            var meters = await repository.Get(userId);
-            return View("GetAll", meters);
+            return Redirect("GetAll");
         }
 
         public async Task<IActionResult> GetAll()
@@ -94,10 +93,43 @@ namespace WebApplication1.Controllers
         }
 
         [HttpPost]
-        
-        public async Task<IActionResult> Delete(EnergyMeter energyMeter)
+        public async Task<IActionResult> Delete(Guid SerialId)
         {
-            await repository.Delete(energyMeter);
+            await repository.DeleteById(SerialId);
+
+            return Redirect("GetAll");
+        }
+
+        public IActionResult Update()
+        {
+            var list = new List<MeterOfPoleDto>();
+
+            list.Add(new MeterOfPoleDto { meterSerialId = "4" });
+
+            var energyMeterCreateViewModel = new EnergyMeterCreateViewModel
+            {
+                serialId = Guid.Empty,
+                Select = "",
+                meterOfPoles = list
+            };
+
+            return View(energyMeterCreateViewModel);
+        }
+
+        // POST: EnergyMeters/Create
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Update([FromForm] EnergyMeterCreateViewModel energyMeterCreateViewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(energyMeterCreateViewModel);
+            }
+            var userId = _userManager.GetUserId(User);
+            var newMeter = energyMeterCreateViewModel.toEnergyMeter(userId);
+            await repository.Update(newMeter);
 
             return Redirect("GetAll");
         }

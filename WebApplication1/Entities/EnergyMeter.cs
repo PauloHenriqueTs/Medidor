@@ -21,8 +21,11 @@ namespace WebApplication1.Entities
             SerialId = serialId;
             UserId = userId;
             Type = type;
-            var removeDuplicate = meters.Distinct().ToList();
-            Meters = removeDuplicate;
+            if(type == TypeOfEnergyMeter.Pole) {
+                var removeDuplicate = meters.Distinct().ToList();
+                Meters = removeDuplicate;
+            }
+            
         }
 
         public string SerialId { get; private set; }
