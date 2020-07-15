@@ -1,13 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Entities;
+using Entities.ValueObjects;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WebApplication1.Data.DAO;
-using WebApplication1.Entities;
-using WebApplication1.ValueObjects;
 
-namespace WebApplication1.Data.Repository
+namespace Persistence.DAO
 {
     public class EnergyMeterRepository
     {

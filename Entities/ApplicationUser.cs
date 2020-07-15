@@ -7,7 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace WebApplication1.Entities
+namespace Entities
 {
     public class ApplicationUser : IdentityUser
     {

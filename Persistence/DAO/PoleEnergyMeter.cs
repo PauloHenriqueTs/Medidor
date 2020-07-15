@@ -1,15 +1,15 @@
-﻿using System;
+﻿using Entities;
+using Entities.ValueObjects;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
-using WebApplication1.Entities;
-using WebApplication1.ValueObjects;
 
-namespace WebApplication1.Data.DAO
+namespace Persistence.DAO
 {
-    public class PoleEnergyMeter
+    internal class PoleEnergyMeter
     {
         public PoleEnergyMeter(string serialId, string userId, List<MeterOfPole> meterOfPoles)
         {
@@ -34,7 +34,7 @@ namespace WebApplication1.Data.DAO
                 list.Add(new MeterOfPole(item.MeterId));
             }
 
-            return new EnergyMeter(this.SerialId, this.UserId, TypeOfEnergyMeter.Pole, list);
+            return new EnergyMeter(SerialId, UserId, TypeOfEnergyMeter.Pole, list);
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

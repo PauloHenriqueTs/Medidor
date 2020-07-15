@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Entities;
+using Entities.ValueObjects;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
@@ -6,8 +8,6 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using WebApplication1.Entities;
-using WebApplication1.ValueObjects;
 
 namespace WebApplication1.ViewModel
 {
@@ -44,8 +44,8 @@ namespace WebApplication1.ViewModel
                 return new EnergyMeter(serialId.ToString(), userId, TypeOfEnergyMeter.Pole, meters);
             }
             return null;
-
         }
+
         [Remote(action: "VerifySerialId", controller: "EnergyMeters")]
         [Required]
         public Guid serialId { get; set; }
@@ -53,17 +53,16 @@ namespace WebApplication1.ViewModel
         [Required]
         public SelectList EnergyTypeList { get; set; }
 
-
         public List<MeterOfPoleDto> meterOfPoles { get; set; }
 
         [DisplayName("Select Type")]
         [Required]
         public string Select { get; set; }
     }
+
     public class MeterOfPoleDto
     {
         [Required]
         public string meterSerialId { get; set; }
     }
-
 }

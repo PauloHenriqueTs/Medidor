@@ -3,15 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using WebApplication1.Data;
-using WebApplication1.Data.Repository;
-using WebApplication1.Entities;
-using WebApplication1.ValueObjects;
+using Persistence.DAO;
 using WebApplication1.ViewModel;
 
 namespace WebApplication1.Controllers
@@ -19,14 +17,12 @@ namespace WebApplication1.Controllers
     [Authorize]
     public class EnergyMetersController : Controller
     {
-        private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
 
         private readonly EnergyMeterRepository repository;
 
-        public EnergyMetersController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, [FromServices] EnergyMeterRepository energyMeterRepository)
+        public EnergyMetersController(UserManager<ApplicationUser> userManager, [FromServices] EnergyMeterRepository energyMeterRepository)
         {
-            _context = context;
             _userManager = userManager;
             repository = energyMeterRepository;
         }

@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using WebApplication1.Data.DAO;
-using WebApplication1.Entities;
+using Persistence.DAO;
 
-namespace WebApplication1.Data
+namespace Persistence
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
@@ -15,11 +15,11 @@ namespace WebApplication1.Data
         {
         }
 
-        public DbSet<MeterOfPoleEnergyMeter> MeterOfPoleEnergyMeters { get; set; }
+        internal DbSet<MeterOfPoleEnergyMeter> MeterOfPoleEnergyMeters { get; set; }
 
-        public DbSet<PoleEnergyMeter> PoleEnergyMeters { get; set; }
+        internal DbSet<PoleEnergyMeter> PoleEnergyMeters { get; set; }
 
-        public DbSet<HouseEnergyMeter> HouseEnergyMeters { get; set; }
+        internal DbSet<HouseEnergyMeter> HouseEnergyMeters { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

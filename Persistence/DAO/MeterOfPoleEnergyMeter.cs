@@ -5,9 +5,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace WebApplication1.Data.DAO
+namespace Persistence.DAO
 {
-    public class MeterOfPoleEnergyMeter
+    internal class MeterOfPoleEnergyMeter
     {
         public MeterOfPoleEnergyMeter()
         {

@@ -1,15 +1,15 @@
-﻿using System;
+﻿using Entities;
+using Entities.ValueObjects;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
-using WebApplication1.Entities;
-using WebApplication1.ValueObjects;
 
-namespace WebApplication1.Data.DAO
+namespace Persistence.DAO
 {
-    public class HouseEnergyMeter
+    internal class HouseEnergyMeter
     {
         public HouseEnergyMeter(string serialId, string userId)
         {
@@ -23,13 +23,12 @@ namespace WebApplication1.Data.DAO
 
         public EnergyMeter ToEnergyMeter()
         {
-            return new EnergyMeter(this.SerialId, this.UserId, TypeOfEnergyMeter.House, null);
+            return new EnergyMeter(SerialId, UserId, TypeOfEnergyMeter.House, null);
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int HouseEnergyMeterId { get; set; }
 
-      
         public string SerialId { get; set; }
 
         public string UserId { get; set; }

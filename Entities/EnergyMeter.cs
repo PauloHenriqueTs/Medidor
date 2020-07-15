@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.DataProtection.KeyManagement;
+﻿using Entities.ValueObjects;
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -7,12 +8,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
-using WebApplication1.ValueObjects;
-using WebApplication1.ViewModel;
 
 #nullable enable
 
-namespace WebApplication1.Entities
+namespace Entities
 {
     public class EnergyMeter
     {
@@ -21,11 +20,11 @@ namespace WebApplication1.Entities
             SerialId = serialId;
             UserId = userId;
             Type = type;
-            if(type == TypeOfEnergyMeter.Pole) {
+            if (type == TypeOfEnergyMeter.Pole)
+            {
                 var removeDuplicate = meters.Distinct().ToList();
                 Meters = removeDuplicate;
             }
-            
         }
 
         public string SerialId { get; private set; }
