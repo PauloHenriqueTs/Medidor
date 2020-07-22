@@ -33,7 +33,12 @@ namespace WebApplication1
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
+            services.AddDefaultIdentity<ApplicationUser>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = false;
+
+                options.Tokens.EmailConfirmationTokenProvider = "CustomEmailConfirmation";
+            })
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddScoped<ApplicationDbContext>();
             services.AddControllersWithViews();
