@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 using Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.Extensions.Options;
+using WebApplication1.Jwt;
 using WebApplication1.ViewModel;
 
 namespace WebApplication1.Controllers
@@ -14,12 +15,14 @@ namespace WebApplication1.Controllers
     {
         private readonly UserManager<ApplicationUser> userManager;
         private readonly SignInManager<ApplicationUser> signInManager;
+        private readonly IOptions<AppSettings> appSettings;
 
         public AccountController(UserManager<ApplicationUser> userManager,
-          SignInManager<ApplicationUser> signInManager)
+          SignInManager<ApplicationUser> signInManager, IOptions<AppSettings> appSettings)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
+            this.appSettings = appSettings;
         }
 
         public IActionResult Register()
@@ -51,6 +54,21 @@ namespace WebApplication1.Controllers
                 }
             }
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> LoginJwt([FromBody] RegisterViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("error");
+            }
+            var result = await signInManager.PasswordSignInAsync(model.Email, model.Password, false, true);
+            if (result.Succeeded)
+            {
+                return Ok(await JwtToken.GerarJwt(userManager, appSettings, model.Email));
+            }
+            return BadRequest("error");
         }
     }
 }
