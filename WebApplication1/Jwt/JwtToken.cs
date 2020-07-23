@@ -19,14 +19,19 @@ namespace WebApplication1.Jwt
             var user = await _userManager.FindByEmailAsync(email);
 
             var identityClaims = new ClaimsIdentity();
-            identityClaims.AddClaims(await _userManager.GetClaimsAsync(user));
-            
+            var claims = await _userManager.GetClaimsAsync(user);
+            identityClaims.AddClaims(claims);
+
             // authentication successful so generate jwt token
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_appSettings.Value.Secret);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = identityClaims,
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+             
+                }),
                 Issuer = _appSettings.Value.Emissor,
                 Audience = _appSettings.Value.ValidoEm,
                 Expires = DateTime.UtcNow.AddHours(_appSettings.Value.ExpiracaoHoras),

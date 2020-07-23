@@ -11,10 +11,12 @@ namespace Persistence.DAO
 {
     internal class HouseEnergyMeter
     {
-        public HouseEnergyMeter(string serialId, string userId)
+        public HouseEnergyMeter(string serialId, string userId, string count, bool switchState)
         {
             SerialId = serialId;
             UserId = userId;
+            Count = count;
+            SwitchState = switchState;
         }
 
         public HouseEnergyMeter()
@@ -23,7 +25,7 @@ namespace Persistence.DAO
 
         public EnergyMeter ToEnergyMeter()
         {
-            return new EnergyMeter(SerialId, UserId, TypeOfEnergyMeter.House, null);
+            return new EnergyMeter(SerialId, UserId, TypeOfEnergyMeter.House, null, Count, SwitchState);
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -31,6 +33,9 @@ namespace Persistence.DAO
 
         public string SerialId { get; set; }
 
+        public string Count { get; set; }
+
+        public bool SwitchState { get; set; }
         public string UserId { get; set; }
     }
 }

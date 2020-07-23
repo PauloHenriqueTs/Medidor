@@ -34,7 +34,7 @@ namespace Persistence.DAO
                 list.Add(new MeterOfPole(item.MeterId));
             }
 
-            return new EnergyMeter(SerialId, UserId, TypeOfEnergyMeter.Pole, list);
+            return new EnergyMeter(SerialId, UserId, TypeOfEnergyMeter.Pole, list, "0", true);
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

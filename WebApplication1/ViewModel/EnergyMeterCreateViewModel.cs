@@ -32,7 +32,7 @@ namespace WebApplication1.ViewModel
         {
             if (Select == "House")
             {
-                return new EnergyMeter(serialId.ToString(), userId, TypeOfEnergyMeter.House, null);
+                return new EnergyMeter(serialId, userId, TypeOfEnergyMeter.House, null, "0", true);
             }
             else if (Select == "Pole" && meterOfPoles.Any())
             {
@@ -41,14 +41,14 @@ namespace WebApplication1.ViewModel
                 {
                     meters.Add(new MeterOfPole(item.meterSerialId));
                 }
-                return new EnergyMeter(serialId.ToString(), userId, TypeOfEnergyMeter.Pole, meters);
+                return new EnergyMeter(serialId, userId, TypeOfEnergyMeter.Pole, meters, "0", true);
             }
             return null;
         }
 
         [Remote(action: "VerifySerialId", controller: "EnergyMeters")]
         [Required]
-        public Guid serialId { get; set; }
+        public string serialId { get; set; }
 
         [Required]
         public SelectList EnergyTypeList { get; set; }
