@@ -29,7 +29,7 @@ namespace Persistence.Tests
         [Fact]
         public async Task CreateHouseEnergyMeter()
         {
-            var energyMeter = new EnergyMeter("1", "1", TypeOfEnergyMeter.House, null);
+            var energyMeter = new EnergyMeter("1", "1", TypeOfEnergyMeter.House, null, "0", true);
 
             await repository.Create(energyMeter);
 
@@ -46,7 +46,7 @@ namespace Persistence.Tests
             meters.Add(new MeterOfPole("2"));
             meters.Add(new MeterOfPole("3"));
 
-            var energyMeter = new EnergyMeter("2", "1", TypeOfEnergyMeter.Pole, meters);
+            var energyMeter = new EnergyMeter("2", "1", TypeOfEnergyMeter.Pole, meters, "0", true);
 
             await repository.Create(energyMeter);
 
@@ -64,10 +64,10 @@ namespace Persistence.Tests
             meters.Add(new MeterOfPole("73"));
             meters.Add(new MeterOfPole("83"));
             var GetData = new List<EnergyMeter>();
-            GetData.Add(new EnergyMeter("33", userId, TypeOfEnergyMeter.House, null));
-            GetData.Add(new EnergyMeter("43", userId, TypeOfEnergyMeter.House, null));
-            GetData.Add(new EnergyMeter("53", userId, TypeOfEnergyMeter.House, null));
-            GetData.Add(new EnergyMeter("63", userId, TypeOfEnergyMeter.Pole, meters));
+            GetData.Add(new EnergyMeter("33", userId, TypeOfEnergyMeter.House, null, "0", true));
+            GetData.Add(new EnergyMeter("43", userId, TypeOfEnergyMeter.House, null, "0", true));
+            GetData.Add(new EnergyMeter("53", userId, TypeOfEnergyMeter.House, null, "0", true));
+            GetData.Add(new EnergyMeter("63", userId, TypeOfEnergyMeter.Pole, meters, "0", true));
 
             foreach (var item in GetData)
             {
@@ -82,7 +82,7 @@ namespace Persistence.Tests
         public async Task DeleteHouseEnergyMeter()
         {
             var userId = "4";
-            var energyMeter = new EnergyMeter("14", userId, TypeOfEnergyMeter.House, null);
+            var energyMeter = new EnergyMeter("14", userId, TypeOfEnergyMeter.House, null, "0", true);
             await repository.Create(energyMeter);
 
             await repository.Delete(energyMeter);
@@ -98,7 +98,7 @@ namespace Persistence.Tests
             meters.Add(new MeterOfPole("144"));
             meters.Add(new MeterOfPole("244"));
             meters.Add(new MeterOfPole("344"));
-            var energyMeter = new EnergyMeter("24", userId, TypeOfEnergyMeter.Pole, meters);
+            var energyMeter = new EnergyMeter("24", userId, TypeOfEnergyMeter.Pole, meters, "0", true);
             await repository.Create(energyMeter);
 
             await repository.Delete(energyMeter);
@@ -114,10 +114,10 @@ namespace Persistence.Tests
             meters.Add(new MeterOfPole("5441"));
             meters.Add(new MeterOfPole("5442"));
             meters.Add(new MeterOfPole("5443"));
-            var energyMeter = new EnergyMeter("15", userId, TypeOfEnergyMeter.Pole, meters);
+            var energyMeter = new EnergyMeter("15", userId, TypeOfEnergyMeter.Pole, meters, "0", true);
 
             await repository.Create(energyMeter);
-            energyMeter = new EnergyMeter("15", userId, TypeOfEnergyMeter.House, null);
+            energyMeter = new EnergyMeter("15", userId, TypeOfEnergyMeter.House, null, "0", true);
             await repository.Update(energyMeter);
 
             var AfterUpdateDb = await dbContext.HouseEnergyMeters.FirstOrDefaultAsync(m => m.SerialId == energyMeter.SerialId);
@@ -132,10 +132,10 @@ namespace Persistence.Tests
             meters.Add(new MeterOfPole("6441"));
             meters.Add(new MeterOfPole("6442"));
             meters.Add(new MeterOfPole("6443"));
-            var energyMeter = new EnergyMeter("16", userId, TypeOfEnergyMeter.House, null);
+            var energyMeter = new EnergyMeter("16", userId, TypeOfEnergyMeter.House, null, "0", true);
 
             await repository.Create(energyMeter);
-            energyMeter = new EnergyMeter("16", userId, TypeOfEnergyMeter.Pole, meters);
+            energyMeter = new EnergyMeter("16", userId, TypeOfEnergyMeter.Pole, meters, "0", true);
             await repository.Update(energyMeter);
 
             var AfterUpdateDb = await dbContext.PoleEnergyMeters.Include(meters => meters.MeterOfPoleEnergyMeters).FirstOrDefaultAsync(m => m.SerialId == energyMeter.SerialId);

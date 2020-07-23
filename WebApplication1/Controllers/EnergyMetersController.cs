@@ -2,14 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Entities;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Persistence.DAO;
+using WebApplication1.Command;
+using WebApplication1.Hubs;
 using WebApplication1.ViewModel;
 
 namespace WebApplication1.Controllers
@@ -21,10 +26,13 @@ namespace WebApplication1.Controllers
 
         private readonly EnergyMeterRepository repository;
 
-        public EnergyMetersController(UserManager<ApplicationUser> userManager, [FromServices] EnergyMeterRepository energyMeterRepository)
+        private readonly IHubContext<ChatHub> _chatHubContext;
+
+        public EnergyMetersController(UserManager<ApplicationUser> userManager, EnergyMeterRepository energyMeterRepository, IHubContext<ChatHub> chatHubContext)
         {
             _userManager = userManager;
             repository = energyMeterRepository;
+            _chatHubContext = chatHubContext;
         }
 
         // GET: EnergyMeters
@@ -43,7 +51,7 @@ namespace WebApplication1.Controllers
 
             var energyMeterCreateViewModel = new EnergyMeterCreateViewModel
             {
-                serialId = Guid.Empty,
+                serialId = "0",
                 Select = "",
                 meterOfPoles = list
             };
@@ -62,6 +70,12 @@ namespace WebApplication1.Controllers
             {
                 return View(energyMeterCreateViewModel);
             }
+            var isExist = await repository.SerialIdExist(energyMeterCreateViewModel.serialId);
+            if (isExist)
+            {
+                return BadRequest($"A user named {energyMeterCreateViewModel.serialId}  already exists");
+            }
+
             var userId = _userManager.GetUserId(User);
             var newMeter = energyMeterCreateViewModel.toEnergyMeter(userId);
             await repository.Create(newMeter);
@@ -90,10 +104,21 @@ namespace WebApplication1.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Delete(Guid SerialId)
+        public async Task<IActionResult> Delete(string SerialId)
         {
             await repository.DeleteById(SerialId);
 
+            return Redirect("GetAll");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Switch(string SerialId)
+        {
+            var userId = _userManager.GetUserId(User);
+            var meter = new HouseMeter { count = "0", serialId = SerialId, Switch = true };
+            var value = new MeterCommand { value = meter, type = MeterCommandType.Switch };
+            var message = JsonSerializer.Serialize(value);
+            await _chatHubContext.Clients.All.SendAsync("ReceiveMessage", userId, message);
             return Redirect("GetAll");
         }
 

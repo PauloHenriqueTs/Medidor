@@ -16,9 +16,10 @@ namespace WebApplication1.ViewModel
         public EnergyMeterUpdateViewModel(EnergyMeter energyMeter)
         {
             ResetSelectList();
-            serialId = Guid.Parse(energyMeter.SerialId);
+            serialId = energyMeter.SerialId;
             Select = energyMeter.Type.ToString();
-
+            Count = energyMeter.Count;
+            Switch = energyMeter.SwitchState;
             meterOfPoles = new List<MeterOfPoleDto>();
             if (energyMeter.Meters != null && energyMeter.Meters.Any())
             {
@@ -49,7 +50,7 @@ namespace WebApplication1.ViewModel
         {
             if (Select == "House")
             {
-                return new EnergyMeter(serialId.ToString(), userId, TypeOfEnergyMeter.House, null);
+                return new EnergyMeter(serialId.ToString(), userId, TypeOfEnergyMeter.House, null, Count, Switch);
             }
             else if (Select == "Pole" && meterOfPoles.Any())
             {
@@ -58,13 +59,17 @@ namespace WebApplication1.ViewModel
                 {
                     meters.Add(new MeterOfPole(item.meterSerialId));
                 }
-                return new EnergyMeter(serialId.ToString(), userId, TypeOfEnergyMeter.Pole, meters);
+                return new EnergyMeter(serialId.ToString(), userId, TypeOfEnergyMeter.Pole, meters, Count, Switch);
             }
             return null;
         }
 
         [Required]
-        public Guid serialId { get; set; }
+        public string serialId { get; set; }
+
+        private string Count { get; set; }
+
+        private bool Switch { get; set; }
 
         [Required]
         public SelectList EnergyTypeList { get; set; }

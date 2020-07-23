@@ -7,7 +7,7 @@
 
 <h1>Create</h1>
 
-<form>
+<form id="formA"> 
     @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 
     <div class="form-group">
@@ -65,8 +65,29 @@
                 dataType: 'json',
                     contentType: 'application/x-www-form-urlencoded; charset=utf-8',
                     data: $("form").serialize(),
-                    success: function (data) { window.location.href = data.redirectToUrl },
-                error: function (data) { console.log(data) }
+                    success: function (data) {
+
+                         
+
+                        window.location.href = data.redirectToUrl
+                    },
+                    error: function (data) {
+
+                        console.log(data.responseText)
+                       var $form = $("#formA");
+                        var $summary = $form.find("[data-valmsg-summary=true]");
+
+                        // find the unordered list
+                        var $ul = $summary.find("ul");
+
+                        // Clear existing errors from DOM by removing all element from the list
+                        $ul.empty();
+
+                        // Add all errors to the list
+                        var error = `<li>${data.responseText}</li>`
+                        $ul.append(error);
+
+                    }
             });
         }
         });

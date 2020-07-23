@@ -7,7 +7,9 @@
             <th scope="col">#</th>
             <th scope="col">SerialId</th>
             <th scope="col">Type</th>
-            <th scope="col">Meters</th>
+            <th scope="col">Count</th>
+            <th scope="col">Switch State</th>
+            
         </tr>
     </thead>
     <tbody>
@@ -18,16 +20,21 @@
                 <th scope="row">@i</th>
                 <td>@Model[i].SerialId</td>
                 <td>@Model[i].Type.ToString()</td>
-
+                <td>@Model[i].Count</td>
+                <td>@Model[i].SwitchState.ToString()</td>
+               
                 @if (Model[i].Meters != null)
                     foreach (var item in Model[i].Meters)
                     {
                         <td>@item.MeterId</td>
                     }
                 <td>@await Html.PartialAsync("Delete.cshtml", Model[i])</td>
+                <td>@await Html.PartialAsync("Switch.cshtml", Model[i])</td>
                 <td>@Html.ActionLink("Update", "Update", "EnergyMeters", Model[i], new { @class = "btn btn-primary" })</td>
             </tr>
         }
     </tbody>
 </table>
-    </div>
+</div>
+
+@await Html.PartialAsync("~/Views/Home/Index.cshtml")

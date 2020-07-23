@@ -25,7 +25,7 @@ namespace Persistence.DAO
             {
                 if (energyMeter.Type == TypeOfEnergyMeter.House)
                 {
-                    var meter = new HouseEnergyMeter(energyMeter.SerialId, energyMeter.UserId);
+                    var meter = new HouseEnergyMeter(energyMeter.SerialId, energyMeter.UserId, "0", true);
 
                     await _dbContext.HouseEnergyMeters.AddAsync(meter);
                     await _dbContext.SaveChangesAsync();
@@ -81,7 +81,7 @@ namespace Persistence.DAO
         {
             if (energyMeter.Type == TypeOfEnergyMeter.House)
             {
-                var meter = new HouseEnergyMeter(energyMeter.SerialId, energyMeter.UserId);
+                var meter = new HouseEnergyMeter(energyMeter.SerialId, energyMeter.UserId, energyMeter.Count, energyMeter.SwitchState);
                 var meterExist = await _dbContext.HouseEnergyMeters.FirstOrDefaultAsync(m => m.SerialId == meter.SerialId);
                 if (meterExist != null)
                 {
@@ -109,9 +109,9 @@ namespace Persistence.DAO
             }
         }
 
-        public async Task DeleteById(Guid serialId)
+        public async Task DeleteById(string serialId)
         {
-            var meterExist = await _dbContext.HouseEnergyMeters.FirstOrDefaultAsync(m => m.SerialId == serialId.ToString());
+            var meterExist = await _dbContext.HouseEnergyMeters.FirstOrDefaultAsync(m => m.SerialId == serialId);
             if (meterExist != null)
             {
                 if (_dbContext.Entry(meterExist).State == EntityState.Detached)
@@ -121,7 +121,7 @@ namespace Persistence.DAO
                 _dbContext.HouseEnergyMeters.Remove(meterExist);
                 await _dbContext.SaveChangesAsync();
             }
-            var MeterExist = await _dbContext.PoleEnergyMeters.Include(meter => meter.MeterOfPoleEnergyMeters).FirstOrDefaultAsync(m => m.SerialId == serialId.ToString());
+            var MeterExist = await _dbContext.PoleEnergyMeters.Include(meter => meter.MeterOfPoleEnergyMeters).FirstOrDefaultAsync(m => m.SerialId == serialId);
             if (MeterExist != null)
             {
                 if (_dbContext.Entry(MeterExist).State == EntityState.Detached)
@@ -153,7 +153,7 @@ namespace Persistence.DAO
         {
             if (energyMeter.Type == TypeOfEnergyMeter.House)
             {
-                var meter = new HouseEnergyMeter(energyMeter.SerialId, energyMeter.UserId);
+                var meter = new HouseEnergyMeter(energyMeter.SerialId, energyMeter.UserId, energyMeter.Count, energyMeter.SwitchState);
                 var meterExist = await _dbContext.PoleEnergyMeters.Include(meters => meters.MeterOfPoleEnergyMeters).FirstOrDefaultAsync(m => m.SerialId == energyMeter.SerialId);
                 if (meterExist != null)
                 {
@@ -162,9 +162,21 @@ namespace Persistence.DAO
                         _dbContext.PoleEnergyMeters.Attach(meterExist);
                     }
                     _dbContext.PoleEnergyMeters.Remove(meterExist);
+                    await _dbContext.HouseEnergyMeters.AddAsync(meter);
                     await _dbContext.SaveChangesAsync();
                 }
-                await _dbContext.HouseEnergyMeters.AddAsync(meter);
+                var meterHouseExist = await _dbContext.HouseEnergyMeters.FirstOrDefaultAsync(m => m.SerialId == energyMeter.SerialId);
+                if (meterHouseExist != null)
+                {
+                    if (_dbContext.Entry(meterHouseExist).State == EntityState.Detached)
+                    {
+                        _dbContext.HouseEnergyMeters.Attach(meterHouseExist);
+                    }
+                    meterHouseExist.Count = energyMeter.Count;
+                    meterHouseExist.SwitchState = energyMeter.SwitchState;
+                    await _dbContext.SaveChangesAsync();
+                }
+
                 await _dbContext.SaveChangesAsync();
             }
             else if (energyMeter.Type == TypeOfEnergyMeter.Pole)

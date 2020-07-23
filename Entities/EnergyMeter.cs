@@ -15,11 +15,13 @@ namespace Entities
 {
     public class EnergyMeter
     {
-        public EnergyMeter(string serialId, string userId, TypeOfEnergyMeter type, List<MeterOfPole> meters)
+        public EnergyMeter(string serialId, string userId, TypeOfEnergyMeter type, List<MeterOfPole> meters, string Count, bool SwitchState)
         {
             SerialId = serialId;
             UserId = userId;
             Type = type;
+            this.Count = Count;
+            this.SwitchState = SwitchState;
             if (type == TypeOfEnergyMeter.Pole)
             {
                 var removeDuplicate = meters.Distinct().ToList();
@@ -34,6 +36,10 @@ namespace Entities
         public TypeOfEnergyMeter Type { get; private set; }
 
         public List<MeterOfPole>? Meters { get; private set; }
+
+        public string Count { get; set; }
+
+        public bool SwitchState { get; set; }
 
         public override bool Equals(object? obj)
         {
