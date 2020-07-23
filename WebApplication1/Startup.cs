@@ -18,6 +18,7 @@ using Entities;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using WebApplication1.Hubs;
 
 namespace WebApplication1
 {
@@ -67,7 +68,7 @@ namespace WebApplication1
             services.AddScoped<ApplicationDbContext>();
             services.AddControllersWithViews();
             services.AddRazorPages();
-
+            services.AddSignalR();
             services.AddScoped<EnergyMeterRepository, EnergyMeterRepository>();
         }
 
@@ -104,6 +105,7 @@ namespace WebApplication1
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
+                endpoints.MapHub<TestHub>("/TestHub");
             });
         }
     }
