@@ -1,4 +1,5 @@
-﻿using Entities;
+﻿using Command;
+using Entities;
 using Entities.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -19,180 +20,90 @@ namespace Persistence.DAO
 
         public async Task Create(EnergyMeter energyMeter)
         {
-            var meterExist = await _dbContext.PoleEnergyMeters.Include(meters => meters.MeterOfPoleEnergyMeters).FirstOrDefaultAsync(m => m.SerialId == energyMeter.SerialId);
-            var MeterExist = await _dbContext.HouseEnergyMeters.FirstOrDefaultAsync(m => m.SerialId == energyMeter.SerialId);
-            if (meterExist == null && MeterExist == null)
+            try
             {
-                if (energyMeter.Type == TypeOfEnergyMeter.House)
-                {
-                    var meter = new HouseEnergyMeter(energyMeter.SerialId, energyMeter.UserId, "0", true);
-
-                    await _dbContext.HouseEnergyMeters.AddAsync(meter);
-                    await _dbContext.SaveChangesAsync();
-                }
-                else if (energyMeter.Type == TypeOfEnergyMeter.Pole)
-                {
-                    var meter = new PoleEnergyMeter(energyMeter.SerialId, energyMeter.UserId, energyMeter.Meters);
-
-                    if (meterExist == null)
-                    {
-                        await _dbContext.PoleEnergyMeters.AddAsync(meter);
-                        await _dbContext.SaveChangesAsync();
-                    }
-                }
+                var dao = new EnergyMeterDao(energyMeter);
+                await _dbContext.AddAsync(dao);
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw new ArgumentException();
             }
         }
 
         public async Task<List<EnergyMeter>> Get(string userId)
         {
-            List<EnergyMeter> meters = new List<EnergyMeter>();
-            var HouseMeters = await _dbContext.HouseEnergyMeters.Where(meters => meters.UserId == userId).ToListAsync();
-            foreach (var item in HouseMeters)
+            var AllEnergyMeters = new List<EnergyMeter>();
+            var daoWithMeterOfPole = await _dbContext.EnergyMetersDaos.Include(m => m.MeterOfPoleDao).Where(m => m.UserId == userId).ToListAsync();
+            var daoWithoutMeterOfPole = await _dbContext.EnergyMetersDaos.Where(m => m.UserId == userId && m.MeterOfPoleDao == null).ToListAsync();
+            foreach (var item in daoWithMeterOfPole)
             {
-                meters.Add(item.ToEnergyMeter());
+                AllEnergyMeters.Add(item.ToEnergyMeter());
             }
-            var PoleMeters = await _dbContext.PoleEnergyMeters.Include(meters => meters.MeterOfPoleEnergyMeters).Where(meters => meters.UserId == userId).ToListAsync();
-            foreach (var item in PoleMeters)
+            foreach (var item in daoWithoutMeterOfPole)
             {
-                meters.Add(item.ToEnergyMeter());
+                AllEnergyMeters.Add(item.ToEnergyMeter());
             }
-
-            return meters;
+            return AllEnergyMeters;
         }
 
-        public async Task<EnergyMeter> GetById(string SerialId, string userId)
+        public async Task<EnergyMeter> GetById(string SerialId, string UserId)
         {
-            List<EnergyMeter> meters = new List<EnergyMeter>();
-            var HouseMeters = await _dbContext.HouseEnergyMeters.Where(meters => meters.UserId == userId && meters.SerialId == SerialId).ToListAsync();
-            foreach (var item in HouseMeters)
-            {
-                meters.Add(item.ToEnergyMeter());
-            }
-            var PoleMeters = await _dbContext.PoleEnergyMeters.Include(meters => meters.MeterOfPoleEnergyMeters).Where(meters => meters.UserId == userId && meters.SerialId == SerialId).ToListAsync();
-            foreach (var item in PoleMeters)
-            {
-                meters.Add(item.ToEnergyMeter());
-            }
-
-            return meters.SingleOrDefault();
+            var dao = await _dbContext.EnergyMetersDaos.FirstOrDefaultAsync(m => m.SerialId == SerialId && m.UserId == UserId);
+            return dao.ToEnergyMeter();
         }
 
         public async Task Delete(EnergyMeter energyMeter)
         {
-            if (energyMeter.Type == TypeOfEnergyMeter.House)
+            var dao = await _dbContext.EnergyMetersDaos.FindAsync(energyMeter.SerialId);
+            if (dao != null)
             {
-                var meter = new HouseEnergyMeter(energyMeter.SerialId, energyMeter.UserId, energyMeter.Count, energyMeter.SwitchState);
-                var meterExist = await _dbContext.HouseEnergyMeters.FirstOrDefaultAsync(m => m.SerialId == meter.SerialId);
-                if (meterExist != null)
+                if (_dbContext.Entry(dao).State == EntityState.Detached)
                 {
-                    if (_dbContext.Entry(meterExist).State == EntityState.Detached)
-                    {
-                        _dbContext.HouseEnergyMeters.Attach(meterExist);
-                    }
-                    _dbContext.HouseEnergyMeters.Remove(meterExist);
-                    await _dbContext.SaveChangesAsync();
+                    _dbContext.EnergyMetersDaos.Attach(dao);
                 }
-            }
-            else if (energyMeter.Type == TypeOfEnergyMeter.Pole)
-            {
-                var meter = new PoleEnergyMeter(energyMeter.SerialId, energyMeter.UserId, energyMeter.Meters);
-                var meterExist = await _dbContext.PoleEnergyMeters.Include(meters => meters.MeterOfPoleEnergyMeters).FirstOrDefaultAsync(m => m.SerialId == meter.SerialId);
-                if (meterExist != null)
-                {
-                    if (_dbContext.Entry(meterExist).State == EntityState.Detached)
-                    {
-                        _dbContext.PoleEnergyMeters.Attach(meterExist);
-                    }
-                    _dbContext.PoleEnergyMeters.Remove(meterExist);
-                    await _dbContext.SaveChangesAsync();
-                }
+                _dbContext.EnergyMetersDaos.Remove(dao);
+                await _dbContext.SaveChangesAsync();
             }
         }
 
-        public async Task DeleteById(string serialId)
+        public async Task DeleteById(string SerialId)
         {
-            var meterExist = await _dbContext.HouseEnergyMeters.FirstOrDefaultAsync(m => m.SerialId == serialId);
-            if (meterExist != null)
+            var dao = await _dbContext.EnergyMetersDaos.FindAsync(SerialId);
+            if (dao != null)
             {
-                if (_dbContext.Entry(meterExist).State == EntityState.Detached)
+                if (_dbContext.Entry(dao).State == EntityState.Detached)
                 {
-                    _dbContext.HouseEnergyMeters.Attach(meterExist);
+                    _dbContext.EnergyMetersDaos.Attach(dao);
                 }
-                _dbContext.HouseEnergyMeters.Remove(meterExist);
-                await _dbContext.SaveChangesAsync();
-            }
-            var MeterExist = await _dbContext.PoleEnergyMeters.Include(meter => meter.MeterOfPoleEnergyMeters).FirstOrDefaultAsync(m => m.SerialId == serialId);
-            if (MeterExist != null)
-            {
-                if (_dbContext.Entry(MeterExist).State == EntityState.Detached)
-                {
-                    _dbContext.PoleEnergyMeters.Attach(MeterExist);
-                }
-                _dbContext.PoleEnergyMeters.Remove(MeterExist);
+                _dbContext.EnergyMetersDaos.Remove(dao);
                 await _dbContext.SaveChangesAsync();
             }
         }
 
         public async Task<bool> SerialIdExist(string SerialId)
         {
-            var PoleMeterExist = await _dbContext.PoleEnergyMeters.Include(meters => meters.MeterOfPoleEnergyMeters).FirstOrDefaultAsync(m => m.SerialId == SerialId);
-            var HouseMeterExist = await _dbContext.HouseEnergyMeters.FirstOrDefaultAsync(m => m.SerialId == SerialId);
-            if (PoleMeterExist != null)
-            {
-                return true;
-            }
-            else if (HouseMeterExist != null)
-            {
-                return true;
-            }
-
-            return false;
+            var dao = await _dbContext.EnergyMetersDaos.FindAsync(SerialId);
+            if (dao == null)
+                return false;
+            return true;
         }
 
         public async Task Update(EnergyMeter energyMeter)
         {
-            if (energyMeter.Type == TypeOfEnergyMeter.House)
+            var dao = await _dbContext.EnergyMetersDaos.FindAsync(energyMeter.SerialId);
+            if (dao != null)
             {
-                var meter = new HouseEnergyMeter(energyMeter.SerialId, energyMeter.UserId, energyMeter.Count, energyMeter.SwitchState);
-                var meterExist = await _dbContext.PoleEnergyMeters.Include(meters => meters.MeterOfPoleEnergyMeters).FirstOrDefaultAsync(m => m.SerialId == energyMeter.SerialId);
-                if (meterExist != null)
-                {
-                    if (_dbContext.Entry(meterExist).State == EntityState.Detached)
-                    {
-                        _dbContext.PoleEnergyMeters.Attach(meterExist);
-                    }
-                    _dbContext.PoleEnergyMeters.Remove(meterExist);
-                    await _dbContext.HouseEnergyMeters.AddAsync(meter);
-                    await _dbContext.SaveChangesAsync();
-                }
-                var meterHouseExist = await _dbContext.HouseEnergyMeters.FirstOrDefaultAsync(m => m.SerialId == energyMeter.SerialId);
-                if (meterHouseExist != null)
-                {
-                    if (_dbContext.Entry(meterHouseExist).State == EntityState.Detached)
-                    {
-                        _dbContext.HouseEnergyMeters.Attach(meterHouseExist);
-                    }
-                    meterHouseExist.Count = energyMeter.Count;
-                    meterHouseExist.SwitchState = energyMeter.SwitchState;
-                    await _dbContext.SaveChangesAsync();
-                }
+                var newDao = new EnergyMeterDao(energyMeter);
+                dao.Type = newDao.Type;
+                if (newDao.Count != null)
+                    dao.Count = newDao.Count;
+                if (newDao.SwitchState != null)
+                    dao.SwitchState = newDao.SwitchState;
+                dao.MeterOfPoleDao = newDao.MeterOfPoleDao;
 
-                await _dbContext.SaveChangesAsync();
-            }
-            else if (energyMeter.Type == TypeOfEnergyMeter.Pole)
-            {
-                var meter = new PoleEnergyMeter(energyMeter.SerialId, energyMeter.UserId, energyMeter.Meters);
-                var meterExist = await _dbContext.HouseEnergyMeters.FirstOrDefaultAsync(m => m.SerialId == energyMeter.SerialId);
-                if (meterExist != null)
-                {
-                    if (_dbContext.Entry(meterExist).State == EntityState.Detached)
-                    {
-                        _dbContext.HouseEnergyMeters.Attach(meterExist);
-                    }
-                    _dbContext.HouseEnergyMeters.Remove(meterExist);
-                    await _dbContext.SaveChangesAsync();
-                }
-                await _dbContext.PoleEnergyMeters.AddAsync(meter);
+                _dbContext.Entry(dao).State = EntityState.Modified;
                 await _dbContext.SaveChangesAsync();
             }
         }

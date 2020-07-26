@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Command;
 using Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -15,15 +16,20 @@ namespace Persistence
         {
         }
 
-        internal DbSet<MeterOfPoleEnergyMeter> MeterOfPoleEnergyMeters { get; set; }
+        internal DbSet<MeterOfPoleDao> MeterOfPoleDaos { get; set; }
 
-        internal DbSet<PoleEnergyMeter> PoleEnergyMeters { get; set; }
+        internal DbSet<EnergyMeterDao> EnergyMetersDaos { get; set; }
 
-        internal DbSet<HouseEnergyMeter> HouseEnergyMeters { get; set; }
+        internal DbSet<MeterCommand> MeterCommands { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<MeterCommand>()
+                        .Property(c => c.Type)
+                        .HasConversion(
+                            t => t.ToString(),
+                            t => (MeterCommandType)Enum.Parse(typeof(MeterCommandType), t));
         }
     }
 }

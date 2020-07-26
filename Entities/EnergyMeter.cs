@@ -22,7 +22,7 @@ namespace Entities
             Type = type;
             this.Count = Count;
             this.SwitchState = SwitchState;
-            if (type == TypeOfEnergyMeter.Pole)
+            if (type == TypeOfEnergyMeter.Pole && meters != null)
             {
                 var removeDuplicate = meters.Distinct().ToList();
                 Meters = removeDuplicate;

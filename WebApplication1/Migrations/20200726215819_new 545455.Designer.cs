@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
 namespace WebApplication1.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200726215819_new 545455")]
+    partial class new545455
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -244,43 +246,69 @@ namespace WebApplication1.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("Persistence.DAO.EnergyMeterDao", b =>
+            modelBuilder.Entity("Persistence.DAO.HouseEnergyMeter", b =>
                 {
-                    b.Property<string>("SerialId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("HouseEnergyMeterId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Count")
-                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SerialId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("SwitchState")
                         .HasColumnType("bit");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("SerialId");
+                    b.HasKey("HouseEnergyMeterId");
 
-                    b.ToTable("EnergyMetersDaos");
+                    b.ToTable("HouseEnergyMeters");
                 });
 
-            modelBuilder.Entity("Persistence.DAO.MeterOfPoleDao", b =>
+            modelBuilder.Entity("Persistence.DAO.MeterOfPoleEnergyMeter", b =>
                 {
-                    b.Property<string>("MeterOfPoleDaoId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("MeterOfPoleEnergyMeterId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("EnergyMeterDaoId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<string>("MeterId")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("MeterOfPoleDaoId");
+                    b.Property<string>("PoleEnergyMeterId")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasIndex("EnergyMeterDaoId");
+                    b.Property<int?>("PoleEnergyMeterId1")
+                        .HasColumnType("int");
 
-                    b.ToTable("MeterOfPoleDaos");
+                    b.HasKey("MeterOfPoleEnergyMeterId");
+
+                    b.HasIndex("PoleEnergyMeterId1");
+
+                    b.ToTable("MeterOfPoleEnergyMeters");
+                });
+
+            modelBuilder.Entity("Persistence.DAO.PoleEnergyMeter", b =>
+                {
+                    b.Property<int>("PoleEnergyMeterId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("SerialId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("PoleEnergyMeterId");
+
+                    b.ToTable("PoleEnergyMeters");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -334,11 +362,11 @@ namespace WebApplication1.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Persistence.DAO.MeterOfPoleDao", b =>
+            modelBuilder.Entity("Persistence.DAO.MeterOfPoleEnergyMeter", b =>
                 {
-                    b.HasOne("Persistence.DAO.EnergyMeterDao", null)
-                        .WithMany("MeterOfPoleDao")
-                        .HasForeignKey("EnergyMeterDaoId");
+                    b.HasOne("Persistence.DAO.PoleEnergyMeter", "PoleEnergyMeter")
+                        .WithMany("MeterOfPoleEnergyMeters")
+                        .HasForeignKey("PoleEnergyMeterId1");
                 });
 #pragma warning restore 612, 618
         }
