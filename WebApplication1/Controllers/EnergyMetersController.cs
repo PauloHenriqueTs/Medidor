@@ -91,6 +91,15 @@ namespace WebApplication1.Controllers
             return View(meters);
         }
 
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<EnergyMeter>>> Get()
+        {
+            var userId = _userManager.GetUserId(User);
+            var meters = await repository.Get(userId);
+
+            return meters;
+        }
+
         [AcceptVerbs("GET", "POST")]
         public async Task<IActionResult> VerifySerialId(string serialId)
         {

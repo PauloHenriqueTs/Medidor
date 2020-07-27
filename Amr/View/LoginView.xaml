@@ -1,0 +1,16 @@
+﻿<Page x:Class="Amr.View.LoginView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Amr"
+        mc:Ignorable="d"
+        Title="Login" Height="450" Width="800">
+    <Grid>
+        <TextBox HorizontalAlignment="Left" Margin="302,183,0,0" Text="{Binding email,Mode=TwoWay}" TextWrapping="NoWrap" VerticalAlignment="Top" Width="216" />
+        <PasswordBox HorizontalAlignment="Left" Margin="302,230,0,0" Name="MyPasswordBox"  VerticalAlignment="Top" Width="216" />
+        <Button Content="Login" Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=MyPasswordBox}" HorizontalAlignment="Left" Margin="352,294,0,0" VerticalAlignment="Top" Height="55" Width="116" />
+        <TextBlock HorizontalAlignment="Left" Margin="302,141,0,0" Text="Email" TextWrapping="Wrap" VerticalAlignment="Top" Height="30" Width="70" />
+        <TextBlock HorizontalAlignment="Left" Margin="302,209,0,0" Text="Password" TextWrapping="Wrap" VerticalAlignment="Top" />
+    </Grid>
+</Page>
