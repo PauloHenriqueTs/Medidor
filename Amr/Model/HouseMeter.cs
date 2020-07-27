@@ -17,10 +17,21 @@ namespace Amr.Model
 
         private string _serialId;
         private string _count;
+        private bool _connect;
 
-        public bool connect { get; set; } = false;
+        public bool connect
+        {
+            get { return _connect; }
+            set
+            {
+                _connect = value;
+                OnPropertyChanged(nameof(connect));
+            }
+        }
 
         public bool Switch { get; set; } = true;
+
+        public string ip { get; set; } = "";
 
         public string serialId
         {

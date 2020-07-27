@@ -2,6 +2,8 @@
 using Amr.Utils;
 using Entities;
 using Microsoft.AspNetCore.SignalR.Client;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -54,12 +56,20 @@ namespace Amr.ViewModel
                   options.Headers.Add("Authorization", "Bearer " + Jwt);
               })
              .Build();
-            connection.On<string, string>("ReceiveMessage", (user, message) =>
+            connection.On<string, string>("ReceiveMessage", async (user, message) =>
             {
                 try
                 {
-                    var meter = JsonSerializer.Deserialize<MeterCommand>(message);
-                    server.WriteTCP(meter);
+                    var command = System.Text.Json.JsonSerializer.Deserialize<MeterCommand>(message);
+                    var meter = meters.FirstOrDefault(m => m.serialId == command.value.serialId);
+                    if (meter != null && meter.connect == true && meter.connect)
+                    {
+                        server.WriteTCP(command);
+                    }
+                    else
+                    {
+                        await connection.InvokeAsync("ErrorMessage", "Meter Disconnect");
+                    }
                 }
                 catch (Exception) { }
             });
@@ -78,23 +88,66 @@ namespace Amr.ViewModel
             {
                 try
                 {
-                    var data = server.ReadTCP(message);
-                    if (connection != null)
-                        await connection.InvokeAsync("SendMessage", "Hello", JsonSerializer.Serialize<MeterCommand>(data));
-                    if (!meters.Any(m => m.serialId == data.value.serialId))
+                    var receivedMessage = Encoding.UTF8.GetString(message.Data, 0, message.Data.Length);
+                    var json = JObject.Parse(receivedMessage);
+                    var type = json["type"].ToObject<MeterCommandType>();
+
+                    switch (type)
                     {
-                        meters.Add(data.value);
-                    }
-                    else
-                    {
-                        var meter = meters.FirstOrDefault(m => m.serialId == data.value.serialId);
-                        meters[meters.IndexOf(meter)] = data.value;
+                        case (MeterCommandType.Syn):
+                            handleSyn(receivedMessage, message.IpPort);
+                            break;
+
+                        case (MeterCommandType.Count):
+                            await handleCountAsync(receivedMessage);
+                            break;
                     }
                 }
                 catch (Exception)
                 {
                 }
             };
+            server.server.ClientDisconnected += async (sender, message) =>
+            {
+                var meter = meters.FirstOrDefault(m => String.Equals(m.ip, message.IpPort));
+                if (meter != null)
+                {
+                    meter.ip = null;
+                    meter.connect = false;
+                    meters[meters.IndexOf(meter)] = meter;
+                }
+            };
+        }
+
+        private void handleSyn(string v, string ipPort)
+        {
+            var data = JsonConvert.DeserializeObject<MeterCommand>(v);
+            var meter = meters.FirstOrDefault(m => m.serialId == data.value.serialId);
+            meter.connect = true;
+            data.type = MeterCommandType.Ack;
+            data.value.count = meter.count;
+
+            meter.ip = ipPort;
+            meters[meters.IndexOf(meter)] = meter;
+
+            server.WriteTCP(data);
+        }
+
+        private async Task handleCountAsync(string v)
+        {
+            var data = JsonConvert.DeserializeObject<MeterCommand>(v);
+            if (connection != null)
+                await connection.InvokeAsync("SendMessage", "Hello", v);
+            if (!meters.Any(m => m.serialId == data.value.serialId))
+            {
+                meters.Add(data.value);
+            }
+            else
+            {
+                var meter = meters.FirstOrDefault(m => m.serialId == data.value.serialId);
+                meter.count = data.value.count;
+                meters[meters.IndexOf(meter)] = meter;
+            }
         }
     }
 }

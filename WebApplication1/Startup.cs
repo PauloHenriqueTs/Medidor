@@ -54,6 +54,16 @@ namespace WebApplication1
             var appSettings = appSettingsSection.Get<AppSettings>();
             var key = Encoding.ASCII.GetBytes(appSettings.Secret);
 
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Signalr", policy =>
+                {
+                    policy.AuthenticationSchemes.Add(CookieAuthenticationDefaults.AuthenticationScheme);
+                    policy.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);
+                    policy.RequireAuthenticatedUser();
+                });
+            });
+
             services.AddAuthentication(
                 options =>
                 {
@@ -119,7 +129,7 @@ namespace WebApplication1
 
             app.UseAuthentication();
             app.UseAuthorization();
-
+            app.UseSignalR();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

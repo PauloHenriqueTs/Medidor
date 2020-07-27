@@ -17,7 +17,7 @@ namespace TCP.Model
 
         private string _serialId;
         private string _count;
-        public bool connect { get; set; } = true;
+        public bool connect { get; set; } = false;
         public bool Switch { get; set; } = true;
 
         public HouseMeter()
@@ -28,9 +28,10 @@ namespace TCP.Model
                 while (true)
                 {
                     await Task.Delay(200);
-                    if (Switch)
+                    if (Switch && connect == true)
                     {
-                        count = (i++).ToString();
+                        count = (Int32.Parse(_count) + 1).ToString();
+                        i++;
                     }
                 }
             });

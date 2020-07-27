@@ -14,6 +14,8 @@ namespace Amr.Utils
     public enum MeterCommandType
     {
         Switch,
-        Count
+        Count,
+        Ack,
+        Syn
     }
 }

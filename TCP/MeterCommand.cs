@@ -14,6 +14,8 @@ namespace TCP
     public enum MeterCommandType
     {
         Switch,
-        Count
+        Count,
+        Ack,
+        Syn
     }
 }
