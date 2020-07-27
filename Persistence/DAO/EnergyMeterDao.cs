@@ -18,23 +18,23 @@ namespace Persistence.DAO
 
         public EnergyMeterDao(EnergyMeter meter)
         {
+            SerialId = meter.SerialId;
+            UserId = meter.UserId;
+            Type = meter.Type;
+            Count = meter.Count;
+            SwitchState = meter.SwitchState;
+
             MeterOfPoleDao = null;
             if (meter.Meters != null)
             {
                 var dao = new List<MeterOfPoleDao>();
                 foreach (var item in meter.Meters)
                 {
-                    dao.Add(new MeterOfPoleDao(meter, item.MeterId));
+                    dao.Add(new MeterOfPoleDao(this, item.MeterId));
                 }
 
                 MeterOfPoleDao = dao;
             }
-
-            SerialId = meter.SerialId;
-            UserId = meter.UserId;
-            Type = meter.Type;
-            Count = meter.Count;
-            SwitchState = meter.SwitchState;
         }
 
         public EnergyMeter ToEnergyMeter()

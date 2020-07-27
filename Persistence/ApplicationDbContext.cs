@@ -25,6 +25,12 @@ namespace Persistence
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<EnergyMeterDao>()
+        .HasMany(e => e.MeterOfPoleDao)
+        .WithOne(m => m.EnergyMeterDao)
+        .HasForeignKey(m => m.EnergyMeterDaoId)
+        .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<MeterCommand>()
                         .Property(c => c.Type)
                         .HasConversion(

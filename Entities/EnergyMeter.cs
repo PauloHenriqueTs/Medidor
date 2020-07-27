@@ -15,7 +15,7 @@ namespace Entities
 {
     public class EnergyMeter
     {
-        public EnergyMeter(string serialId, string userId, TypeOfEnergyMeter type, List<MeterOfPole> meters, string Count, bool SwitchState)
+        public EnergyMeter(string serialId, string userId, TypeOfEnergyMeter type, List<MeterOfPole>? meters, string Count, bool SwitchState)
         {
             SerialId = serialId;
             UserId = userId;

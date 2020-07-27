@@ -90,6 +90,7 @@ namespace WebApplication1
             services.AddSignalR();
 
             services.AddScoped<EnergyMeterRepository, EnergyMeterRepository>();
+            services.AddScoped<CommandRepository, CommandRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -8,22 +8,23 @@ namespace Persistence.DAO
 {
     internal class MeterOfPoleDao
     {
-        
-
         public MeterOfPoleDao()
         {
         }
 
-        public MeterOfPoleDao(EnergyMeter meter, string meterId)
+        public MeterOfPoleDao(EnergyMeterDao meter, string meterId)
         {
             MeterOfPoleDaoId = meterId;
             EnergyMeterDaoId = meter.SerialId;
+            EnergyMeterDao = meter;
         }
 
         [Key]
         public string MeterOfPoleDaoId { get; set; }
 
         public string EnergyMeterDaoId { get; set; }
+
+        public EnergyMeterDao EnergyMeterDao { get; set; }
 
         public override bool Equals(object obj)
         {
