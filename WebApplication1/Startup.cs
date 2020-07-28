@@ -22,6 +22,7 @@ using Microsoft.IdentityModel.Tokens;
 using WebApplication1.Hubs;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.Http.Connections;
 
 namespace WebApplication1
 {
@@ -129,14 +130,19 @@ namespace WebApplication1
 
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseSignalR();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
-                endpoints.MapHub<ChatHub>("/chathub");
+                endpoints.MapHub<ChatHub>("/chathub", options =>
+                {
+                    options.Transports =
+                        HttpTransportType.WebSockets |
+                        HttpTransportType.LongPolling;
+                });
             });
         }
     }

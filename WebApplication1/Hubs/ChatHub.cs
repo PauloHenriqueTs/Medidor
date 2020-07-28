@@ -15,7 +15,7 @@ using WebApplication1.Command;
 
 namespace WebApplication1.Hubs
 {
-    [Authorize(Policy = "Signalr")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class ChatHub : Hub
     {
         private readonly EnergyMeterRepository repository;
@@ -30,7 +30,7 @@ namespace WebApplication1.Hubs
             try
             {
                 var userId = NameUserIdProvider.GetUserId(Context);
-                Debug.WriteLine(message);
+
                 var command = JsonSerializer.Deserialize<MeterCommand>(message);
                 var meter = new EnergyMeter(command.value.serialId, userId, TypeOfEnergyMeter.House, null, command.value.count, command.value.Switch);
                 await repository.Update(meter);
@@ -43,7 +43,8 @@ namespace WebApplication1.Hubs
         public async Task ErrorMessage(string message)
         {
             Debug.WriteLine(message);
-            await Clients.All.SendAsync("ReceiveMessage", "hello", message);
+            var userId = NameUserIdProvider.GetUserId(Context);
+            await Clients.All.SendAsync("ReceiveMessage", userId, message);
         }
     }
 }

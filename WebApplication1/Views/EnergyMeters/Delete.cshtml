@@ -6,7 +6,7 @@
 @using (Html.BeginForm("Delete", "EnergyMeters", FormMethod.Post))
 {
 
-    @Html.EditorFor(model => model.SerialId, new { htmlAttributes = new { @class = "form-control", @type = "hidden" } });
+    @Html.EditorFor(model => model.SerialId, new { htmlAttributes = new { @class = "form-control", @type = "hidden" ,@id="delete"} });
     <input type="submit" value="Delete" class="btn btn-primary" id="SubmitBtn" />
 
     @Html.AntiForgeryToken()

@@ -39,7 +39,7 @@ namespace Amr.ViewModel
             meters = new ObservableCollection<HouseMeter>();
             foreach (var item in test)
             {
-                meters.Add(new HouseMeter { serialId = item.SerialId, Switch = item.SwitchState, count = item.Count });
+                meters.Add(new HouseMeter { serialId = item.SerialId, Switch = false, count = item.Count });
             }
 
             BindingOperations.EnableCollectionSynchronization(meters, new object());
@@ -62,11 +62,11 @@ namespace Amr.ViewModel
                 {
                     var command = System.Text.Json.JsonSerializer.Deserialize<MeterCommand>(message);
                     var meter = meters.FirstOrDefault(m => m.serialId == command.value.serialId);
-                    if (meter != null && meter.connect == true && meter.connect)
+                    if (meter != null && meter.connect)
                     {
                         server.WriteTCP(command);
                     }
-                    else
+                    else if (meter != null && !meter.connect)
                     {
                         await connection.InvokeAsync("ErrorMessage", "Meter Disconnect");
                     }

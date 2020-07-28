@@ -9,7 +9,6 @@
             <th scope="col">Type</th>
             <th scope="col">Count</th>
             <th scope="col">Switch State</th>
-            
         </tr>
     </thead>
     <tbody>
@@ -22,7 +21,7 @@
                 <td>@Model[i].Type.ToString()</td>
                 <td>@Model[i].Count</td>
                 <td>@Model[i].SwitchState.ToString()</td>
-               
+
                 @if (Model[i].Meters != null)
                     foreach (var item in Model[i].Meters)
                     {
@@ -38,3 +37,8 @@
 </div>
 
 @await Html.PartialAsync("~/Views/Home/Index.cshtml")
+
+@section Scripts {
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
