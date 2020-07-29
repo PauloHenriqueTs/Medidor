@@ -2,16 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Command;
 using Entities;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Persistence;
 
-namespace WebApplication1.Controllers
+namespace WebApi.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     [Authorize]
-    public class CommandController : Controller
+    public class CommandController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
 
@@ -23,12 +27,13 @@ namespace WebApplication1.Controllers
             repository = commandRepository;
         }
 
-        public async Task<IActionResult> Index()
+        [HttpGet]
+        public async Task<ActionResult<List<MeterCommand>>> Index()
         {
             var userId = _userManager.GetUserId(User);
             var commands = await repository.Get(userId);
 
-            return View(commands);
+            return Ok(commands);
         }
     }
 }

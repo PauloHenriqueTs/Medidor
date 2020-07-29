@@ -57,13 +57,13 @@ namespace Amr.ViewModel
             var dto = new LoginDto { Email = email, Password = secret, ConfirmPassword = secret };
             try
             {
-                HttpResponseMessage response = await client.PostAsJsonAsync("https://localhost:5001/Account/LoginJwt", dto);
+                HttpResponseMessage response = await client.PostAsJsonAsync("https://localhost:5001/api/Account/login", dto);
 
                 if (response.IsSuccessStatusCode)
                 {
                     var token = await response.Content.ReadAsStringAsync();
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                    var res = await client.GetAsync("https://localhost:5001/EnergyMeters/Get");
+                    var res = await client.GetAsync("https://localhost:5001/api/EnergyMeters");
                     var resAsString = await res.Content.ReadAsStringAsync();
                     var test = JsonConvert.DeserializeObject<IEnumerable<EnergyMeter>>(resAsString);
 

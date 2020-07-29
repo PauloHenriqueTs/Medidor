@@ -4,32 +4,35 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 using WebApplication1.Models;
+using WebApplication1.Services;
 
 namespace WebApplication1.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly SignInManager<ApplicationUser> _SignInManager;
 
-        public HomeController(ILogger<HomeController> logger, SignInManager<ApplicationUser> SignInManager)
+        public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
-            _SignInManager = SignInManager;
         }
 
         public IActionResult Index()
         {
-            if (_SignInManager.IsSignedIn(User))
+            var token = JwtService.GetJwt(HttpContext);
+
+            if (token != null)
             {
-                return Redirect("/EnergyMeters/Create");
+                return RedirectToRoute(new { controller = "EnergyMeters", action = "GetAll" });
             }
-            else { return View(); }
+
+            return View();
         }
 
         public IActionResult Privacy()
