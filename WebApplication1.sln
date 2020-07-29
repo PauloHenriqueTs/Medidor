@@ -11,9 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Entities", "Entities\Entiti
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Command", "MeterCommand\Command.csproj", "{0D933E04-7B18-4923-8713-393E0A8AC55A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amr", "Amr\Amr.csproj", "{B269B964-9EA2-41C9-B526-22323F5BF8F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amr", "Amr\Amr.csproj", "{B269B964-9EA2-41C9-B526-22323F5BF8F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TCP", "TCP\TCP.csproj", "{DFD7AAB7-B05B-4F9F-9D89-3924898E5AF8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TCP", "TCP\TCP.csproj", "{DFD7AAB7-B05B-4F9F-9D89-3924898E5AF8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "WebApi\WebApi.csproj", "{2E9FCBC8-CA50-4701-976F-CCE21621448F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,6 +73,14 @@ Global
 		{DFD7AAB7-B05B-4F9F-9D89-3924898E5AF8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DFD7AAB7-B05B-4F9F-9D89-3924898E5AF8}.Release|x86.ActiveCfg = Release|x86
 		{DFD7AAB7-B05B-4F9F-9D89-3924898E5AF8}.Release|x86.Build.0 = Release|x86
+		{2E9FCBC8-CA50-4701-976F-CCE21621448F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E9FCBC8-CA50-4701-976F-CCE21621448F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E9FCBC8-CA50-4701-976F-CCE21621448F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2E9FCBC8-CA50-4701-976F-CCE21621448F}.Debug|x86.Build.0 = Debug|Any CPU
+		{2E9FCBC8-CA50-4701-976F-CCE21621448F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E9FCBC8-CA50-4701-976F-CCE21621448F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E9FCBC8-CA50-4701-976F-CCE21621448F}.Release|x86.ActiveCfg = Release|Any CPU
+		{2E9FCBC8-CA50-4701-976F-CCE21621448F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

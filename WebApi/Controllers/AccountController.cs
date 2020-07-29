@@ -2,16 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using WebApplication1.Jwt;
-using WebApplication1.ViewModel;
+using WebApi.Jwt;
+using Entities;
+using WebApi.Dto;
 
-namespace WebApplication1.Controllers
+namespace WebApi.Controllers
 {
-    public class AccountController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class AccountController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> userManager;
         private readonly SignInManager<ApplicationUser> signInManager;
@@ -25,14 +28,8 @@ namespace WebApplication1.Controllers
             this.appSettings = appSettings;
         }
 
-        public IActionResult Register()
-        {     
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterViewModel model)
+        [HttpPost("register")]
+        public async Task<IActionResult> Register(RegisterDto model)
         {
             if (ModelState.IsValid)
             {
@@ -45,7 +42,7 @@ namespace WebApplication1.Controllers
                 if (result.Succeeded)
                 {
                     await signInManager.SignInAsync(user, isPersistent: false);
-                    return RedirectToAction("Index", "Home");
+                    return Ok();
                 }
 
                 foreach (var error in result.Errors)
@@ -53,11 +50,11 @@ namespace WebApplication1.Controllers
                     ModelState.AddModelError("", error.Description);
                 }
             }
-            return View();
+            return BadRequest();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> LoginJwt([FromBody] RegisterViewModel model)
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginDto model)
         {
             if (!ModelState.IsValid)
             {
