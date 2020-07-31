@@ -11,4 +11,9 @@
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="SuperSimpleTcp" Version="2.0.5" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CryptoLib\CryptoLib.csproj" />
+    <ProjectReference Include="..\MeterCommand\Command.csproj" />
+  </ItemGroup>
 </Project>

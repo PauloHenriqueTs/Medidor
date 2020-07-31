@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amr", "Amr\Amr.csproj", "{B
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TCP", "TCP\TCP.csproj", "{DFD7AAB7-B05B-4F9F-9D89-3924898E5AF8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "WebApi\WebApi.csproj", "{2E9FCBC8-CA50-4701-976F-CCE21621448F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi", "WebApi\WebApi.csproj", "{2E9FCBC8-CA50-4701-976F-CCE21621448F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CryptoLib", "CryptoLib\CryptoLib.csproj", "{A564BB01-D5C7-49B1-BA2F-584C6E70D57A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -81,6 +83,14 @@ Global
 		{2E9FCBC8-CA50-4701-976F-CCE21621448F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2E9FCBC8-CA50-4701-976F-CCE21621448F}.Release|x86.ActiveCfg = Release|Any CPU
 		{2E9FCBC8-CA50-4701-976F-CCE21621448F}.Release|x86.Build.0 = Release|Any CPU
+		{A564BB01-D5C7-49B1-BA2F-584C6E70D57A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A564BB01-D5C7-49B1-BA2F-584C6E70D57A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A564BB01-D5C7-49B1-BA2F-584C6E70D57A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A564BB01-D5C7-49B1-BA2F-584C6E70D57A}.Debug|x86.Build.0 = Debug|Any CPU
+		{A564BB01-D5C7-49B1-BA2F-584C6E70D57A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A564BB01-D5C7-49B1-BA2F-584C6E70D57A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A564BB01-D5C7-49B1-BA2F-584C6E70D57A}.Release|x86.ActiveCfg = Release|Any CPU
+		{A564BB01-D5C7-49B1-BA2F-584C6E70D57A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

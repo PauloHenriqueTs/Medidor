@@ -1,5 +1,6 @@
 ﻿using Amr.Model;
 using Amr.Utils;
+using CryptoLib;
 using Entities;
 using Microsoft.AspNetCore.SignalR.Client;
 using Newtonsoft.Json;
@@ -62,14 +63,8 @@ namespace Amr.ViewModel
                 {
                     var command = System.Text.Json.JsonSerializer.Deserialize<MeterCommand>(message);
                     var meter = meters.FirstOrDefault(m => m.serialId == command.value.serialId);
-                    if (meter != null && meter.connect)
-                    {
-                        server.WriteTCP(command);
-                    }
-                    else if (meter != null && !meter.connect)
-                    {
-                        await connection.InvokeAsync("ErrorMessage", "Meter Disconnect");
-                    }
+
+                    server.WriteTCP(command);
                 }
                 catch (Exception) { }
             });
@@ -88,7 +83,8 @@ namespace Amr.ViewModel
             {
                 try
                 {
-                    var receivedMessage = Encoding.UTF8.GetString(message.Data, 0, message.Data.Length);
+                    var encrypt = Encoding.UTF8.GetString(message.Data, 0, message.Data.Length);
+                    var receivedMessage = Protector.Decrypt(encrypt, "secret");
                     var json = JObject.Parse(receivedMessage);
                     var type = json["type"].ToObject<MeterCommandType>();
 
@@ -114,6 +110,7 @@ namespace Amr.ViewModel
                 {
                     meter.ip = null;
                     meter.connect = false;
+                    meter.Switch = false;
                     meters[meters.IndexOf(meter)] = meter;
                 }
             };
@@ -140,11 +137,13 @@ namespace Amr.ViewModel
                 await connection.InvokeAsync("SendMessage", "Hello", v);
             if (!meters.Any(m => m.serialId == data.value.serialId))
             {
+                data.value.Switch = true;
                 meters.Add(data.value);
             }
             else
             {
                 var meter = meters.FirstOrDefault(m => m.serialId == data.value.serialId);
+                meter.Switch = true;
                 meter.count = data.value.count;
                 meters[meters.IndexOf(meter)] = meter;
             }

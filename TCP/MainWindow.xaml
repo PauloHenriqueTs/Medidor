@@ -22,11 +22,11 @@
         <Button
             Width="137"
             Height="68"
-            Margin="51,62,0,0"
+            Margin="51,249,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            Command="{Binding StopCommand}"
-            Content="Stop" />
+            Command="{Binding StartServerCommand}"
+            Content="Start Server" />
         <TextBox
             Width="137"
             Height="24"
@@ -34,7 +34,10 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             RenderTransformOrigin="0.5,0.5"
-            Text="{Binding Path=houseMeter.serialId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            Text="{Binding Port}"
             TextWrapping="Wrap" />
+        <TextBlock HorizontalAlignment="Left" Margin="51,193,0,0" Text="{Binding Error}" TextWrapping="Wrap" VerticalAlignment="Top" Height="24" Width="137" Foreground="#FFEA0707" />
+        <TextBlock HorizontalAlignment="Left" Margin="51,144,0,0" Text="Port" TextWrapping="Wrap" VerticalAlignment="Top" />
+        <TextBlock HorizontalAlignment="Left" Margin="51,220,0,0" Text="{Binding ServerRunning}" TextWrapping="Wrap" VerticalAlignment="Top" Height="24" Width="137" Foreground="#FF41EC0F" />
     </Grid>
 </Window>

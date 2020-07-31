@@ -15,7 +15,6 @@ using WebApplication1.Command;
 
 namespace WebApplication1.Hubs
 {
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class ChatHub : Hub
     {
         private readonly EnergyMeterRepository repository;

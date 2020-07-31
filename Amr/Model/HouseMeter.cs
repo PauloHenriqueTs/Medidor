@@ -29,7 +29,17 @@ namespace Amr.Model
             }
         }
 
-        public bool Switch { get; set; } = true;
+        public bool _Switch { get; set; } = true;
+
+        public bool Switch
+        {
+            get { return _Switch; }
+            set
+            {
+                _Switch = value;
+                OnPropertyChanged(nameof(Switch));
+            }
+        }
 
         public string ip { get; set; } = "";
 

@@ -1,4 +1,5 @@
-﻿using SimpleTcp;
+﻿using CryptoLib;
+using SimpleTcp;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -22,16 +23,17 @@ namespace Amr.Utils
         public MeterCommand ReadTCP(DataReceivedFromClientEventArgs message)
         {
             var received = Encoding.UTF8.GetString(message.Data, 0, message.Data.Length);
-            return JsonSerializer.Deserialize<MeterCommand>(received);
+            var decrypt = Protector.Decrypt(received, "secret");
+            return JsonSerializer.Deserialize<MeterCommand>(decrypt);
         }
 
         public void WriteTCP(MeterCommand command)
         {
             var sender = JsonSerializer.Serialize(command);
-
+            var encrypt = Protector.Encrypt(sender, "secret");
             foreach (var item in server.GetClients())
             {
-                server.Send(item, Encoding.UTF8.GetBytes(sender));
+                server.Send(item, Encoding.UTF8.GetBytes(encrypt));
             }
         }
 
