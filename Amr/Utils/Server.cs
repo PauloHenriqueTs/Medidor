@@ -16,7 +16,7 @@ namespace Amr.Utils
 
         public Server()
         {
-            server = new TcpServer(GetLocalIPAddress().ToString(), 23, false, null, null);
+            server = new TcpServer("127.0.0.1", 23, false, null, null);
             server.Start();
         }
 

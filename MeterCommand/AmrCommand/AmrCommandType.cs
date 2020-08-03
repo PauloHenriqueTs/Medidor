@@ -5,7 +5,7 @@
         SYN,
         ACK,
         NACK,
-        UpdateCount,
+        GetCount,
         Switch
     }
 }

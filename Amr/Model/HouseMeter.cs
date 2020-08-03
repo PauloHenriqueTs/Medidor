@@ -41,7 +41,7 @@ namespace Amr.Model
             }
         }
 
-        public string ip { get; set; } = "";
+        public int port { get; set; }
 
         public string serialId
         {

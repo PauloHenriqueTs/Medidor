@@ -22,7 +22,11 @@ namespace Amr.View
     /// </summary>
     public partial class MainView : Page
     {
-        private IEnumerable<EnergyMeter> test;
+        public MainView()
+        {
+            InitializeComponent();
+            this.DataContext = new MainViewModel();
+        }
 
         public MainView(string token, IEnumerable<EnergyMeter> test)
         {

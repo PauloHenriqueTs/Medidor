@@ -28,7 +28,7 @@ namespace TCP.Model
                 while (true)
                 {
                     await Task.Delay(200);
-                    if (Switch && connect == true)
+                    if (Switch && connect)
                     {
                         count = (Int32.Parse(_count) + 1).ToString();
                         i++;

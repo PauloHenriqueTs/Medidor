@@ -28,8 +28,9 @@ namespace TCP.ViewModel
 
         public HouseMeter houseMeter { get; set; }
         public ICommand StartServerCommand { get; set; }
-
+        private string _port { get; set; }
         private string _error { get; set; }
+        private string _serverRunning { get; set; }
 
         public string Error
         {
@@ -41,8 +42,6 @@ namespace TCP.ViewModel
             }
         }
 
-        private string _port { get; set; }
-
         public string Port
         {
             get { return _port; }
@@ -52,8 +51,6 @@ namespace TCP.ViewModel
                 OnPropertyChanged(nameof(Port));
             }
         }
-
-        private string _serverRunning { get; set; }
 
         public string ServerRunning
         {
@@ -79,10 +76,9 @@ namespace TCP.ViewModel
             try
             {
                 server = new TcpServer("127.0.0.1", Int32.Parse(Port), false, null, null);
-                server.ClientConnected += ClientConnected;
                 server.DataReceived += HandleDataReceived;
                 server.Start();
-                handleSyn();
+                SendAck();
                 Error = "";
                 ServerRunning = "Running";
             }
@@ -96,34 +92,65 @@ namespace TCP.ViewModel
         {
             var data = Encoding.UTF8.GetString(message.Data, 0, message.Data.Length);
             var json = JObject.Parse(data);
-            var type = json["type"].ToObject<AmrCommandType>();
+            var type = json["Type"].ToObject<AmrCommandType>();
             switch (type)
             {
+                case (AmrCommandType.GetCount):
+                    HandleGetCount(data);
+                    break;
+
                 case (AmrCommandType.SYN):
-                    handleSyn();
+                    HandleSYN(data);
+                    break;
+
+                case (AmrCommandType.Switch):
+                    HandleSwitch(data);
                     break;
             }
         }
 
-        private void handleSyn()
+        private void HandleSwitch(string data)
         {
-            var AckCommand = new AckArmCommand(houseMeter.serialId, Port, AmrCommandType.ACK);
-            SendCommand(AckCommand);
+            var command = JsonConvert.DeserializeObject<SwitchAmrCommand>(data);
+            if (houseMeter.serialId == command.serialId)
+            {
+                houseMeter.Switch = !houseMeter.Switch;
+                SendAck();
+            }
         }
 
-        private void ClientConnected(object sender, ClientConnectedEventArgs e)
+        private void HandleSYN(string data)
         {
-            Debug.WriteLine("[" + e.IpPort + "] client connected");
+            var command = JsonConvert.DeserializeObject<SynArmCommand>(data);
+            if (houseMeter.serialId == command.Meter.serialId)
+            {
+                houseMeter.count = command.Meter.count;
+                houseMeter.Switch = command.Meter.Switch;
+                houseMeter.connect = true;
+            }
+            SendAck();
         }
 
-        private async void SendCommand(IAmrCommand command)
+        private void HandleGetCount(string data)
+        {
+            SendAck();
+        }
+
+        private void SendAck()
+        {
+            var AckCommand = new AckArmCommand(new AmrMeter(houseMeter.serialId, houseMeter.count, houseMeter.Switch), Port);
+            var json = JsonConvert.SerializeObject(AckCommand);
+            SendCommand(json);
+        }
+
+        private void SendCommand(string c)
         {
             try
             {
                 TcpClient client = new TcpClient("127.0.0.1", 23, false, null, null);
                 client.Connect();
-                var json = JsonConvert.SerializeObject(command);
-                client.Send(Encoding.UTF8.GetBytes(json));
+
+                client.Send(Encoding.UTF8.GetBytes(c));
                 client.Dispose();
                 Error = "";
             }

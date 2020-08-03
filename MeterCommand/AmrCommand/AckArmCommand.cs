@@ -6,15 +6,14 @@ namespace Command.AmrCommand
 {
     public class AckArmCommand : IAmrCommand
     {
-        public AckArmCommand(string serialId, string port, AmrCommandType type) : base(type)
+        public AckArmCommand(AmrMeter meter, string port)
         {
-            this.serialId = serialId;
-
+            Meter = meter;
             this.port = port;
+            Type = AmrCommandType.ACK;
         }
 
-        public string serialId { get; set; }
-
+        public AmrMeter Meter { get; set; }
         public string port { get; set; }
     }
 }

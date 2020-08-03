@@ -6,16 +6,12 @@ namespace Command.AmrCommand
 {
     public class SynArmCommand : IAmrCommand
     {
-        public string serialId { get; set; }
+        public AmrMeter Meter { get; set; }
 
-        public string ip { get; set; }
-        public string port { get; set; }
-
-        public SynArmCommand(string serialId, string ip, string port, AmrCommandType type) : base(type)
+        public SynArmCommand(AmrMeter meter)
         {
-            this.serialId = serialId;
-            this.ip = ip;
-            this.port = port;
+            Meter = meter;
+            Type = AmrCommandType.SYN;
         }
     }
 }

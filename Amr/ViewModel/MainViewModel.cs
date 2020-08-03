@@ -1,10 +1,12 @@
 ﻿using Amr.Model;
 using Amr.Utils;
+using Command.AmrCommand;
 using CryptoLib;
 using Entities;
 using Microsoft.AspNetCore.SignalR.Client;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using SimpleTcp;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -35,7 +37,7 @@ namespace Amr.ViewModel
         public MainViewModel(string token, IEnumerable<EnergyMeter> test)
         {
             Jwt = token;
-            AddCommand = new RelayCommand(Add, e => true);
+            //AddCommand = new RelayCommand(Add, e => true);
             server = new Server();
             meters = new ObservableCollection<HouseMeter>();
             foreach (var item in test)
@@ -46,6 +48,21 @@ namespace Amr.ViewModel
             BindingOperations.EnableCollectionSynchronization(meters, new object());
             Task.Run(GetMessages);
             Task.Run(signalr);
+        }
+
+        public MainViewModel()
+        {
+            try
+            {
+                server = new Server();
+                meters = new ObservableCollection<HouseMeter>();
+                meters.Add(new HouseMeter { serialId = "2", count = "200", connect = true, Switch = false });
+                Task.Run(GetMessages);
+                BindingOperations.EnableCollectionSynchronization(meters, new object());
+            }
+            catch (Exception)
+            {
+            }
         }
 
         private async Task signalr()
@@ -71,82 +88,53 @@ namespace Amr.ViewModel
             await connection.StartAsync();
         }
 
-        private void Add(object o)
-        {
-            connection.InvokeAsync("SendMessage", "Hello", "Hello");
-            server.WriteTCP(new MeterCommand { value = Selected, type = MeterCommandType.Switch });
-        }
-
         private async Task GetMessages()
         {
-            server.server.DataReceived += async (sender, message) =>
+            server.server.DataReceived += (sender, message) =>
             {
-                try
-                {
-                    var encrypt = Encoding.UTF8.GetString(message.Data, 0, message.Data.Length);
-                    var receivedMessage = Protector.Decrypt(encrypt, "secret");
-                    var json = JObject.Parse(receivedMessage);
-                    var type = json["type"].ToObject<MeterCommandType>();
+                var data = Encoding.UTF8.GetString(message.Data, 0, message.Data.Length);
+                var json = JObject.Parse(data);
 
-                    switch (type)
-                    {
-                        case (MeterCommandType.Syn):
-                            handleSyn(receivedMessage, message.IpPort);
-                            break;
-
-                        case (MeterCommandType.Count):
-                            await handleCountAsync(receivedMessage);
-                            break;
-                    }
-                }
-                catch (Exception)
+                var type = json["Type"].ToObject<AmrCommandType>();
+                switch (type)
                 {
-                }
-            };
-            server.server.ClientDisconnected += async (sender, message) =>
-            {
-                var meter = meters.FirstOrDefault(m => String.Equals(m.ip, message.IpPort));
-                if (meter != null)
-                {
-                    meter.ip = null;
-                    meter.connect = false;
-                    meter.Switch = false;
-                    meters[meters.IndexOf(meter)] = meter;
+                    case (AmrCommandType.ACK):
+                        HandleAck(data);
+                        break;
                 }
             };
         }
 
-        private void handleSyn(string v, string ipPort)
+        private void HandleAck(string data)
         {
-            var data = JsonConvert.DeserializeObject<MeterCommand>(v);
-            var meter = meters.FirstOrDefault(m => m.serialId == data.value.serialId);
-            meter.connect = true;
-            data.type = MeterCommandType.Ack;
-            data.value.count = meter.count;
-
-            meter.ip = ipPort;
-            meters[meters.IndexOf(meter)] = meter;
-
-            server.WriteTCP(data);
-        }
-
-        private async Task handleCountAsync(string v)
-        {
-            var data = JsonConvert.DeserializeObject<MeterCommand>(v);
-            if (connection != null)
-                await connection.InvokeAsync("SendMessage", "Hello", v);
-            if (!meters.Any(m => m.serialId == data.value.serialId))
+            var command = JsonConvert.DeserializeObject<AckArmCommand>(data);
+            var meter = meters.FirstOrDefault(m => m.serialId == command.Meter.serialId);
+            meter.port = Int32.Parse(command.port);
+            if (command.Meter.count == null)
             {
-                data.value.Switch = true;
-                meters.Add(data.value);
+                var SynCommand = new SynArmCommand(new AmrMeter(meter.serialId, meter.count, meter.Switch));
+                var json = JsonConvert.SerializeObject(SynCommand);
+                SendCommand(json, meter.port);
             }
             else
             {
-                var meter = meters.FirstOrDefault(m => m.serialId == data.value.serialId);
-                meter.Switch = true;
-                meter.count = data.value.count;
+                meter.count = command.Meter.count;
+                meter.Switch = command.Meter.Switch;
                 meters[meters.IndexOf(meter)] = meter;
             }
+        }
+
+        private void SendCommand(string c, int port)
+        {
+            try
+            {
+                TcpClient client = new TcpClient("127.0.0.1", port, false, null, null);
+                client.Connect();
+
+                client.Send(Encoding.UTF8.GetBytes(c));
+                client.Dispose();
+            }
+            catch (Exception) { }
         }
     }
 }

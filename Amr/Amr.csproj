@@ -16,5 +16,6 @@
   <ItemGroup>
     <ProjectReference Include="..\CryptoLib\CryptoLib.csproj" />
     <ProjectReference Include="..\Entities\Entities.csproj" />
+    <ProjectReference Include="..\MeterCommand\Command.csproj" />
   </ItemGroup>
 </Project>
