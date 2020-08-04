@@ -39,7 +39,7 @@ namespace Persistence.DAO
 
         public EnergyMeter ToEnergyMeter()
         {
-            if (MeterOfPoleDao != null)
+            if (!MeterOfPoleDao.Any())
             {
                 var meterOfPoles = new List<MeterOfPole>();
                 foreach (var item in MeterOfPoleDao)

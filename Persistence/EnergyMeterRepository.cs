@@ -51,7 +51,7 @@ namespace Persistence.DAO
 
         public async Task<EnergyMeter> GetById(string SerialId, string UserId)
         {
-            var dao = await _dbContext.EnergyMetersDaos.FirstOrDefaultAsync(m => m.SerialId == SerialId && m.UserId == UserId);
+            var dao = await _dbContext.EnergyMetersDaos.Include(m => m.MeterOfPoleDao).FirstOrDefaultAsync(m => m.SerialId == SerialId && m.UserId == UserId);
             return dao.ToEnergyMeter();
         }
 

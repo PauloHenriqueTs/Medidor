@@ -36,8 +36,43 @@
             RenderTransformOrigin="0.5,0.5"
             Text="{Binding Port}"
             TextWrapping="Wrap" />
-        <TextBlock HorizontalAlignment="Left" Margin="51,193,0,0" Text="{Binding Error}" TextWrapping="Wrap" VerticalAlignment="Top" Height="24" Width="137" Foreground="#FFEA0707" />
-        <TextBlock HorizontalAlignment="Left" Margin="51,144,0,0" Text="Port" TextWrapping="Wrap" VerticalAlignment="Top" />
-        <TextBlock HorizontalAlignment="Left" Margin="51,220,0,0" Text="{Binding ServerRunning}" TextWrapping="Wrap" VerticalAlignment="Top" Height="24" Width="137" Foreground="#FF41EC0F" />
+        <TextBlock
+            Width="137"
+            Height="24"
+            Margin="51,193,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Foreground="#FFEA0707"
+            Text="{Binding Error}"
+            TextWrapping="Wrap" />
+        <TextBlock
+            Margin="51,144,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Text="Port"
+            TextWrapping="Wrap" />
+        <TextBlock
+            Width="137"
+            Height="24"
+            Margin="51,220,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Foreground="#FF41EC0F"
+            Text="{Binding ServerRunning}"
+            TextWrapping="Wrap" />
+        <TextBox
+            Width="143"
+            Height="30"
+            Margin="51,101,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Text="{Binding houseMeter.serialId}"
+            TextWrapping="Wrap" />
+        <TextBlock
+            Margin="51,73,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            RenderTransformOrigin="-0.014,-0.332"
+            TextWrapping="Wrap"><Run Text="Serial Id" /><LineBreak /></TextBlock>
     </Grid>
 </Window>

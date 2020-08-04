@@ -78,22 +78,35 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("switch")]
-        public async Task<IActionResult> Switch([FromBody]string SerialId)
+        public async Task<IActionResult> Switch([FromBody] string SerialId)
         {
             var userId = _userManager.GetUserId(User);
             var meter = new HouseMeter { count = "0", serialId = SerialId, Switch = true };
             var value = new MeterCommand { value = meter, type = MeterCommandType.Switch };
             var message = JsonSerializer.Serialize(value);
-            await _chatHubContext.Clients.All.SendAsync("ReceiveMessage", userId, message);
+            await _chatHubContext.Clients.Group(userId).SendAsync("ReceiveMessage", message);
             return Redirect("GetAll");
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> Delete(string SerialId)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(string id)
         {
-            await repository.DeleteById(SerialId);
+            await repository.DeleteById(id);
 
             return Ok();
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<EnergyMeter>> GetById(string id)
+        {
+            var userId = _userManager.GetUserId(User);
+            var isExist = await repository.GetById(id, userId);
+            if (isExist != null)
+            {
+                return isExist;
+            }
+
+            return BadRequest();
         }
 
         [HttpGet("verifySerialId")]

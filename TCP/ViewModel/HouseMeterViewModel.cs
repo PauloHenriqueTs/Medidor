@@ -68,7 +68,6 @@ namespace TCP.ViewModel
         {
             StartServerCommand = new RelayCommand(StartServer);
             houseMeter = new HouseMeter();
-            houseMeter.serialId = "2";
         }
 
         private void StartServer(object obj)

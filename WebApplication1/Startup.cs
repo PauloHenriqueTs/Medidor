@@ -38,6 +38,7 @@ namespace WebApplication1
             services.AddSession();
 
             services.AddControllersWithViews();
+            services.AddSignalR();
             services.AddRazorPages();
             services.AddScoped<AccountService, AccountService>();
         }
@@ -48,7 +49,6 @@ namespace WebApplication1
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                
             }
             else
             {
