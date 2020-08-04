@@ -32,6 +32,8 @@ namespace Amr.ViewModel
         public HouseMeter Selected { get; set; }
         public ICommand AddCommand { get; set; }
 
+        private string userId { get; set; }
+
         private string Jwt { get; set; }
 
         public MainViewModel(string token, IEnumerable<EnergyMeter> test)
@@ -40,8 +42,10 @@ namespace Amr.ViewModel
             //AddCommand = new RelayCommand(Add, e => true);
             server = new Server();
             meters = new ObservableCollection<HouseMeter>();
+
             foreach (var item in test)
             {
+                userId = item.UserId;
                 meters.Add(new HouseMeter { serialId = item.SerialId, Switch = false, count = item.Count });
             }
 
@@ -54,7 +58,7 @@ namespace Amr.ViewModel
         {
             try
             {
-                AddCommand = new DelegateCommand(async (param) => await GetCount(param));
+                //      AddCommand = new DelegateCommand(async (param) => await GetCount(param));
                 server = new Server();
                 meters = new ObservableCollection<HouseMeter>();
                 meters.Add(new HouseMeter { serialId = "2", count = "200", connect = true, Switch = false });
@@ -66,38 +70,36 @@ namespace Amr.ViewModel
             }
         }
 
-        private async Task GetCount(object param)
+        private async Task GetCount(string id)
         {
             await Task.Run(() =>
             {
-                if (Selected != null)
+                var findMeter = meters.FirstOrDefault(m => m.serialId == id);
+                var command = new SwitchAmrCommand(id);
+
+                var json = JsonConvert.SerializeObject(command);
+
+                SendCommand(json, findMeter.port);
+                var BeforeMeter = meters.FirstOrDefault(m => m.serialId == id);
+
+                Task t = Task.Run(() =>
                 {
-                    var id = Selected.serialId;
-
-                    var command = new SwitchAmrCommand(id);
-                    var json = JsonConvert.SerializeObject(command);
-                    SendCommand(json, Selected.port);
-                    var BeforeMeter = meters.FirstOrDefault(m => m.serialId == id);
-
-                    Task t = Task.Run(() =>
+                    try
                     {
-                        try
+                        var Meter = meters.FirstOrDefault(m => m.serialId == id);
+                        while (BeforeMeter.Switch == Meter.Switch)
                         {
-                            var Meter = meters.FirstOrDefault(m => m.serialId == id);
-                            while (BeforeMeter.Switch == Meter.Switch)
-                            {
-                                Meter = meters.FirstOrDefault(m => m.serialId == id);
-                            }
+                            Meter = meters.FirstOrDefault(m => m.serialId == id);
                         }
-                        catch (Exception) { }
-
-                        Debug.WriteLine("Deu Bom");
-                    });
-                    bool test = t.Wait(5000);
-                    if (!test)
-                    {
-                        Debug.WriteLine("Error   ");
                     }
+                    catch (Exception) { }
+
+                    Debug.WriteLine("Deu Bom");
+                });
+                bool test = t.Wait(5000);
+                if (!test)
+                {
+                    Debug.WriteLine("Error   ");
                 }
             });
         }
@@ -111,38 +113,41 @@ namespace Amr.ViewModel
                   options.Headers.Add("Authorization", "Bearer " + Jwt);
               })
              .Build();
-            connection.On<string, string>("ReceiveMessage", (user, message) =>
+
+            connection.On<string>("ReceiveMessage", async (message) =>
            {
                try
                {
                    var command = System.Text.Json.JsonSerializer.Deserialize<MeterCommand>(message);
-                   var meter = meters.FirstOrDefault(m => m.serialId == command.value.serialId);
-
-                   server.WriteTCP(command);
+                   if (command.type == MeterCommandType.Switch)
+                   {
+                       await GetCount(command.value.serialId);
+                   }
                }
                catch (Exception) { }
            });
             await connection.StartAsync();
+            await connection.InvokeAsync("JoinGroup");
         }
 
         private void GetMessages()
         {
-            server.server.DataReceived += (sender, message) =>
-            {
-                var data = Encoding.UTF8.GetString(message.Data, 0, message.Data.Length);
-                var json = JObject.Parse(data);
+            server.server.DataReceived += async (sender, message) =>
+           {
+               var data = Encoding.UTF8.GetString(message.Data, 0, message.Data.Length);
+               var json = JObject.Parse(data);
 
-                var type = json["Type"].ToObject<AmrCommandType>();
-                switch (type)
-                {
-                    case (AmrCommandType.ACK):
-                        HandleAck(data);
-                        break;
-                }
-            };
+               var type = json["Type"].ToObject<AmrCommandType>();
+               switch (type)
+               {
+                   case (AmrCommandType.ACK):
+                       await HandleAck(data);
+                       break;
+               }
+           };
         }
 
-        private void HandleAck(string data)
+        private async Task HandleAck(string data)
         {
             var command = JsonConvert.DeserializeObject<AckArmCommand>(data);
             var meter = meters.FirstOrDefault(m => m.serialId == command.Meter.serialId);
@@ -158,6 +163,7 @@ namespace Amr.ViewModel
                 meter.count = command.Meter.count;
                 meter.Switch = command.Meter.Switch;
                 meters[meters.IndexOf(meter)] = meter;
+                await connection.InvokeAsync("SendMessage", data);
             }
         }
 

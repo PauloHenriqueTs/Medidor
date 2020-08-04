@@ -127,7 +127,7 @@ namespace WebApplication1.Controllers
             var meter = new HouseMeter { count = "0", serialId = SerialId, Switch = true };
             var value = new MeterCommand { value = meter, type = MeterCommandType.Switch };
             var message = JsonSerializer.Serialize(value);
-            await _chatHubContext.Clients.All.SendAsync("ReceiveMessage", userId, message);
+            await _chatHubContext.Clients.Group(userId).SendAsync("ReceiveMessage", message);
             return Redirect("GetAll");
         }
 

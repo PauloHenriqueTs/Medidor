@@ -22,7 +22,7 @@ namespace Amr
         public MainWindow()
         {
             InitializeComponent();
-            Main.Navigate(new MainView());
+            Main.Navigate(new LoginView(Main));
         }
 
         public void FrameContent(object o)

@@ -66,8 +66,7 @@ namespace Amr.ViewModel
                     var res = await client.GetAsync("https://localhost:5001/EnergyMeters/Get");
                     var resAsString = await res.Content.ReadAsStringAsync();
                     var test = JsonConvert.DeserializeObject<IEnumerable<EnergyMeter>>(resAsString);
-
-                    nav.Navigate(new MainView(token, test));
+                    nav.Content = new MainView(token, test);
                 }
             }
             catch (Exception) { }

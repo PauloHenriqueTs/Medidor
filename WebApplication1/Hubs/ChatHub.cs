@@ -1,4 +1,5 @@
-﻿using Entities;
+﻿using Command.AmrCommand;
+using Entities;
 using Entities.ValueObjects;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -15,6 +16,7 @@ using WebApplication1.Command;
 
 namespace WebApplication1.Hubs
 {
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class ChatHub : Hub
     {
         private readonly EnergyMeterRepository repository;
@@ -24,26 +26,28 @@ namespace WebApplication1.Hubs
             this.repository = repository;
         }
 
-        public async Task SendMessage(string user, string message)
+        public async Task JoinGroup()
         {
-            try
-            {
-                var userId = NameUserIdProvider.GetUserId(Context);
+            //Get userId
+            var userId = NameUserIdProvider.GetUserId(Context);
+            await Groups.AddToGroupAsync(Context.ConnectionId, userId);
+        }
 
-                var command = JsonSerializer.Deserialize<MeterCommand>(message);
-                var meter = new EnergyMeter(command.value.serialId, userId, TypeOfEnergyMeter.House, null, command.value.count, command.value.Switch);
+        public async Task SendMessage(string message)
+        {
+            var userId = NameUserIdProvider.GetUserId(Context);
+            if (userId != null)
+            {
+                var command = Newtonsoft.Json.JsonConvert.DeserializeObject<AckArmCommand>(message);
+                var meter = new EnergyMeter(command.Meter.serialId, userId, TypeOfEnergyMeter.House, null, command.Meter.count, command.Meter.Switch);
                 await repository.Update(meter);
             }
-            catch (Exception) { }
-
-            await Clients.All.SendAsync("ReceiveMessage", user, message);
         }
 
         public async Task ErrorMessage(string message)
         {
-            Debug.WriteLine(message);
             var userId = NameUserIdProvider.GetUserId(Context);
-            await Clients.All.SendAsync("ReceiveMessage", userId, message);
+            await Clients.Group(userId).SendAsync("ReceiveMessage", message);
         }
     }
 }
