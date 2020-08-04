@@ -54,7 +54,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginDto model)
+        public async Task<IActionResult> Login(LoginDto model)
         {
             if (!ModelState.IsValid)
             {

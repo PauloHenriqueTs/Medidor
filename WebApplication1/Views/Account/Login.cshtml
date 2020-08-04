@@ -1,7 +1,7 @@
-﻿@model WebApplication1.ViewModel.RegisterViewModel
+﻿@model WebApplication1.ViewModel.LoginViewModel
 
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = "Login";
 }
 
 <h1>Register</h1>
@@ -10,12 +10,12 @@
     <div class="col-md-8 mx-auto">
         <div class="card">
             <div class="card-header bg-primary text-white">
-                <h5 class="text-uppercase text-center">User Registration Form</h5>
+                <h5 class="text-uppercase text-center">Login Form</h5>
             </div>
             <div class="card-body">
-                <form asp-action="Register">
+                <form asp-action="Login">
                     <div class="row">
-                    
+
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label asp-for="Email"></label>
@@ -32,19 +32,10 @@
                                 <span asp-validation-for="Password" class="text-danger"></span>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="ConfirmPassword"></label>
-                                <input asp-for="ConfirmPassword" class="form-control" />
-                                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-                            </div>
-                        </div>
                     </div>
-                    <input type="submit" value="Register" class="btn btn-sm btn-primary text-uppercase rounded-0" />
+                    <input type="submit" value="Login" class="btn btn-sm btn-primary text-uppercase rounded-0" />
                 </form>
             </div>
         </div>
     </div>
 </div>
-
-

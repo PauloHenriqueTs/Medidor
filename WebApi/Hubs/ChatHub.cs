@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 using WebApi;
 using WebApi.Command;
 
-namespace WebApplication1.Hubs
+namespace WebApi.Hubs
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class ChatHub : Hub

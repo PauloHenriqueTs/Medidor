@@ -20,7 +20,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Persistence;
 using Persistence.DAO;
-using WebApplication1.Hubs;
+using WebApi.Hubs;
 
 namespace WebApi
 {
