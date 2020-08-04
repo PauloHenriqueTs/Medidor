@@ -54,6 +54,7 @@ namespace Amr.ViewModel
         {
             try
             {
+                AddCommand = new DelegateCommand(async (param) => await GetCount(param));
                 server = new Server();
                 meters = new ObservableCollection<HouseMeter>();
                 meters.Add(new HouseMeter { serialId = "2", count = "200", connect = true, Switch = false });
@@ -65,6 +66,42 @@ namespace Amr.ViewModel
             }
         }
 
+        private async Task GetCount(object param)
+        {
+            await Task.Run(() =>
+            {
+                if (Selected != null)
+                {
+                    var id = Selected.serialId;
+
+                    var command = new SwitchAmrCommand(id);
+                    var json = JsonConvert.SerializeObject(command);
+                    SendCommand(json, Selected.port);
+                    var BeforeMeter = meters.FirstOrDefault(m => m.serialId == id);
+
+                    Task t = Task.Run(() =>
+                    {
+                        try
+                        {
+                            var Meter = meters.FirstOrDefault(m => m.serialId == id);
+                            while (BeforeMeter.Switch == Meter.Switch)
+                            {
+                                Meter = meters.FirstOrDefault(m => m.serialId == id);
+                            }
+                        }
+                        catch (Exception) { }
+
+                        Debug.WriteLine("Deu Bom");
+                    });
+                    bool test = t.Wait(5000);
+                    if (!test)
+                    {
+                        Debug.WriteLine("Error   ");
+                    }
+                }
+            });
+        }
+
         private async Task signalr()
         {
             connection = new HubConnectionBuilder()
@@ -74,21 +111,21 @@ namespace Amr.ViewModel
                   options.Headers.Add("Authorization", "Bearer " + Jwt);
               })
              .Build();
-            connection.On<string, string>("ReceiveMessage", async (user, message) =>
-            {
-                try
-                {
-                    var command = System.Text.Json.JsonSerializer.Deserialize<MeterCommand>(message);
-                    var meter = meters.FirstOrDefault(m => m.serialId == command.value.serialId);
+            connection.On<string, string>("ReceiveMessage", (user, message) =>
+           {
+               try
+               {
+                   var command = System.Text.Json.JsonSerializer.Deserialize<MeterCommand>(message);
+                   var meter = meters.FirstOrDefault(m => m.serialId == command.value.serialId);
 
-                    server.WriteTCP(command);
-                }
-                catch (Exception) { }
-            });
+                   server.WriteTCP(command);
+               }
+               catch (Exception) { }
+           });
             await connection.StartAsync();
         }
 
-        private async Task GetMessages()
+        private void GetMessages()
         {
             server.server.DataReceived += (sender, message) =>
             {
