@@ -52,6 +52,14 @@ namespace WebApplication1.Services
             return Response;
         }
 
+        public async Task<HttpResponseMessage> GetCount(string jwt, string serialId)
+        {
+            client = new HttpClient();
+            client.DefaultRequestHeaders.Add("Authorization", String.Format("Bearer {0}", jwt.Replace("\"", string.Empty).Trim()));
+            var Response = await client.PostAsJsonAsync("https://localhost:5001/api/EnergyMeters/getCount", serialId);
+            return Response;
+        }
+
         public async Task<HttpResponseMessage> Update(string jwt, EnergyMeterUpdateViewModel model)
         {
             client = new HttpClient();

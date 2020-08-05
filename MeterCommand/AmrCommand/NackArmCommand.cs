@@ -4,12 +4,12 @@ using System.Text;
 
 namespace Command.AmrCommand
 {
-    public class CountAmrCommand : IAmrCommand
+    public class NackArmCommand : IAmrCommand
     {
-        public CountAmrCommand(string serialId)
+        public NackArmCommand(string serialId)
         {
             this.serialId = serialId;
-            Type = AmrCommandType.GetCount;
+            Type = AmrCommandType.NACK;
         }
 
         public string serialId { get; set; }

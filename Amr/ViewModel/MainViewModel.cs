@@ -46,7 +46,7 @@ namespace Amr.ViewModel
             foreach (var item in test)
             {
                 userId = item.UserId;
-                meters.Add(new HouseMeter { serialId = item.SerialId, Switch = false, count = item.Count });
+                meters.Add(new HouseMeter { serialId = item.SerialId, Switch = item.SwitchState, count = item.Count });
             }
 
             BindingOperations.EnableCollectionSynchronization(meters, new object());
@@ -70,36 +70,42 @@ namespace Amr.ViewModel
             }
         }
 
-        private async Task GetCount(string id)
+        private async Task Switch(string message)
         {
+            var command = System.Text.Json.JsonSerializer.Deserialize<MeterCommand>(message);
+            if (command.value == null)
+            {
+                return;
+            }
+            var id = command.value.serialId;
+            var BeforeMeter = command.value;
             await Task.Run(async () =>
             {
                 var findMeter = meters.FirstOrDefault(m => m.serialId == id);
                 var command = new SwitchAmrCommand(id);
-
+                BeforeMeter.Switch = !BeforeMeter.Switch;
                 var json = JsonConvert.SerializeObject(command);
 
                 SendCommand(json, findMeter.port);
-                var BeforeMeter = meters.FirstOrDefault(m => m.serialId == id);
 
-                Task t = Task.Run(async () =>
-                {
-                    try
-                    {
-                        var Meter = meters.FirstOrDefault(m => m.serialId == id);
-                        while (BeforeMeter.Switch == Meter.Switch)
-                        {
-                            Meter = meters.FirstOrDefault(m => m.serialId == id);
-                        }
-                    }
-                    catch (Exception) { }
-
-                    await connection.InvokeAsync("ErrorMessage", String.Format("Switch Command Meter:{0}", id));
-                });
-                bool test = t.Wait(5000);
+                Task t = Task.Run(() =>
+               {
+                   try
+                   {
+                       var Meter = meters.FirstOrDefault(m => m.serialId == id);
+                       while (BeforeMeter.Switch == Meter.Switch)
+                       {
+                           Meter = meters.FirstOrDefault(m => m.serialId == id);
+                       }
+                   }
+                   catch (Exception) { }
+               });
+                var after = meters.FirstOrDefault(m => m.serialId == id);
+                bool test = t.Wait(2000);
                 if (!test)
                 {
-                    await connection.InvokeAsync("ErrorMessage", String.Format("Error Switch Meter:{0}", id));
+                    var data = JsonConvert.SerializeObject(new NackArmCommand(id));
+                    await connection.InvokeAsync("ErrorMessage", data);
                 }
             });
         }
@@ -118,16 +124,63 @@ namespace Amr.ViewModel
            {
                try
                {
-                   var command = System.Text.Json.JsonSerializer.Deserialize<MeterCommand>(message);
-                   if (command.type == MeterCommandType.Switch)
+                   var json = JObject.Parse(message);
+                   var type = json["type"].ToObject<MeterCommandType>();
+                   switch (type)
                    {
-                       await GetCount(command.value.serialId);
+                       case (MeterCommandType.Switch):
+                           await Switch(message);
+                           break;
+
+                       case (MeterCommandType.Count):
+                           await GetCount(message);
+                           break;
                    }
                }
                catch (Exception) { }
            });
             await connection.StartAsync();
             await connection.InvokeAsync("JoinGroup");
+        }
+
+        private async Task GetCount(string message)
+        {
+            var command = System.Text.Json.JsonSerializer.Deserialize<MeterCommand>(message);
+            if (command.value == null)
+            {
+                return;
+            }
+            var id = command.value.serialId;
+            var BeforeMeter = command.value;
+            await Task.Run(async () =>
+            {
+                var findMeter = meters.FirstOrDefault(m => m.serialId == id);
+                var command = new CountAmrCommand(id);
+
+                var json = JsonConvert.SerializeObject(command);
+
+                SendCommand(json, findMeter.port);
+
+                Task t = Task.Run(() =>
+                {
+                    try
+                    {
+                        var Meter = meters.FirstOrDefault(m => m.serialId == id);
+                        while (BeforeMeter.count == Meter.count)
+                        {
+                            Meter = meters.FirstOrDefault(m => m.serialId == id);
+                        }
+                    }
+                    catch (Exception) { }
+                });
+                var after = meters.FirstOrDefault(m => m.serialId == id);
+                bool test = t.Wait(2000);
+                if (!test)
+                {
+                    var data = JsonConvert.SerializeObject(new NackArmCommand(id));
+                    await connection.InvokeAsync("ErrorMessage", data);
+                }
+            });
         }
 
         private void GetMessages()

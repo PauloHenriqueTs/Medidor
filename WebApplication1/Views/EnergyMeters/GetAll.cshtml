@@ -1,7 +1,7 @@
 @model List<Entities.EnergyMeter>
 
 @Html.ActionLink("Create New", "Create", "EnergyMeters", null, new { @class = "btn btn-primary" })
-<div class="alert alert-primary" role="alert" id="signalr">
+<div class="alert alert-danger" role="alert" id="signalr">
 </div>
 <input type="hidden" value="@ViewBag.Jwt" id="jwt" />
 <table class="table">
@@ -32,6 +32,7 @@
                     }
                 <td>@await Html.PartialAsync("Delete.cshtml", Model[i])</td>
                 <td>@await Html.PartialAsync("Switch.cshtml", Model[i])</td>
+                <td>@await Html.PartialAsync("GetCount.cshtml", Model[i])</td>
                 <td>@Html.ActionLink("Update", "Update", "EnergyMeters", Model[i], new { @class = "btn btn-primary" })</td>
             </tr>
         }
@@ -40,7 +41,6 @@
 </div>
 
 @section Scripts {
-
 
     <script src="~/js/chat.js" asp-append-version="true"></script>
 

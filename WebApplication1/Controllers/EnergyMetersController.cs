@@ -56,5 +56,26 @@ namespace WebApplication1.Controllers
                 return RedirectToRoute(new { controller = "Account", action = "Login" });
             }
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GetCount(string SerialId)
+        {
+            var jwt = JwtService.GetJwt(HttpContext);
+            if (jwt != null)
+            {
+                EnergyMetersService service = new EnergyMetersService(jwt);
+                var responseMessage = await service.GetCount(jwt, SerialId);
+                if (responseMessage.IsSuccessStatusCode)
+                {
+                    return Redirect("GetAll");
+                }
+                return BadRequest();
+            }
+            else
+            {
+                return RedirectToRoute(new { controller = "Account", action = "Login" });
+            }
+        }
     }
 }

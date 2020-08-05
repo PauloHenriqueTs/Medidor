@@ -1,0 +1,10 @@
+﻿@model Entities.EnergyMeter
+
+@using (Html.BeginForm("GetCount", "EnergyMeters", FormMethod.Post))
+{
+
+    @Html.EditorFor(model => model.SerialId, new { htmlAttributes = new { @class = "form-control", @type = "hidden", @id = "switch" } });
+    <input type="submit" value="GetCount" class="btn btn-primary" id="SubmitBtn" />
+
+    @Html.AntiForgeryToken()
+}

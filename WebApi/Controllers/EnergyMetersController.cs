@@ -83,7 +83,23 @@ namespace WebApi.Controllers
             var userId = _userManager.GetUserId(User);
             var meter = new HouseMeter { count = "0", serialId = serialId, Switch = true };
             var value = new MeterCommand { value = meter, type = MeterCommandType.Switch };
-            var message = JsonSerializer.Serialize(value);
+            var message = Newtonsoft.Json.JsonConvert.SerializeObject(value);
+            await _chatHubContext.Clients.Group(userId).SendAsync("ReceiveMessage", message);
+            return Ok();
+        }
+
+        [HttpPost("getCount")]
+        public async Task<IActionResult> GetCount([FromBody] string serialId)
+        {
+            var userId = _userManager.GetUserId(User);
+            var EnergyMeter = await repository.GetById(serialId, userId);
+            if (EnergyMeter == null)
+            {
+                return BadRequest();
+            }
+            var meter = new HouseMeter { count = EnergyMeter.Count, serialId = EnergyMeter.SerialId, Switch = EnergyMeter.SwitchState };
+            var value = new MeterCommand { value = meter, type = MeterCommandType.Count };
+            var message = Newtonsoft.Json.JsonConvert.SerializeObject(value);
             await _chatHubContext.Clients.Group(userId).SendAsync("ReceiveMessage", message);
             return Ok();
         }
