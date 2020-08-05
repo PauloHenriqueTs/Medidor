@@ -1,41 +1,10 @@
 ﻿@model Entities.EnergyMeter
 
+@using (Html.BeginForm("Switch", "EnergyMeters", FormMethod.Post))
+{
 
-<form>
-@Html.EditorFor(model => model.SerialId, new { htmlAttributes = new { @class = "form-control", @type = "hidden", @id = "switch" } })
-  <input type="submit" value="Switch" class="btn btn-primary" id="SubmitBtn" />
- @Html.AntiForgeryToken()
-</form>
+    @Html.EditorFor(model => model.SerialId, new { htmlAttributes = new { @class = "form-control", @type = "hidden", @id = "switch" } });
+    <input type="submit" value="Switch" class="btn btn-primary" id="SubmitBtn" />
 
-@section Scripts {
-    <script>
-        $(document).ready(function () {     
-            $("#SubmitBtn").click(submit);
-           
-                   
-            function submit(event) {
-                event.preventDefault();
-
-                var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
-               
-                $.ajax({
-                    headers: {
-                        'RequestVerificationToken': antiForgeryToken
-                },
-                type: "POST",
-                url: "@Url.Action("Switch", "EnergyMeters")",
-                traditional: true,
-                dataType: 'json',
-                    contentType: 'application/x-www-form-urlencoded; charset=utf-8',
-                    data: $("form").serialize(),
-                    success: function (data) {
-                      //  window.location.href = data.redirectToUrl
-                    },
-                    error: function (data) { }
-            });
-        }
-        });
-    </script>
-
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @Html.AntiForgeryToken()
 }

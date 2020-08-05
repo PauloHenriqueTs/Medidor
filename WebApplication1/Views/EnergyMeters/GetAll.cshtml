@@ -3,7 +3,7 @@
 @Html.ActionLink("Create New", "Create", "EnergyMeters", null, new { @class = "btn btn-primary" })
 <div class="alert alert-primary" role="alert" id="signalr">
 </div>
-<input type="hidden" value="@ViewBag.Jwt" id="jwt"/>
+<input type="hidden" value="@ViewBag.Jwt" id="jwt" />
 <table class="table">
     <thead>
         <tr>
@@ -40,6 +40,7 @@
 </div>
 
 @section Scripts {
+
 
     <script src="~/js/chat.js" asp-append-version="true"></script>
 

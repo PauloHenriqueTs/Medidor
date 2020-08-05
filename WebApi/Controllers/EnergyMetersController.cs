@@ -78,14 +78,14 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("switch")]
-        public async Task<IActionResult> Switch([FromBody] string SerialId)
+        public async Task<IActionResult> Switch([FromBody] string serialId)
         {
             var userId = _userManager.GetUserId(User);
-            var meter = new HouseMeter { count = "0", serialId = SerialId, Switch = true };
+            var meter = new HouseMeter { count = "0", serialId = serialId, Switch = true };
             var value = new MeterCommand { value = meter, type = MeterCommandType.Switch };
             var message = JsonSerializer.Serialize(value);
             await _chatHubContext.Clients.Group(userId).SendAsync("ReceiveMessage", message);
-            return Redirect("GetAll");
+            return Ok();
         }
 
         [HttpDelete("{id}")]

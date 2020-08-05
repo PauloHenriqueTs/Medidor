@@ -71,6 +71,19 @@ namespace WebApi
             })
             .AddJwtBearer(x =>
             {
+                x.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var acesstoken = context.Request.Query["access_token"];
+                        if (String.IsNullOrEmpty(acesstoken) == false)
+                        {
+                            context.Token = acesstoken;
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
+
                 x.RequireHttpsMetadata = true;
                 x.SaveToken = true;
                 x.TokenValidationParameters = new TokenValidationParameters

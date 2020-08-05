@@ -2,10 +2,10 @@
 
 jQuery(document).ready(function ($) {
     $("#signalr").hide();
-    var value =  $("#jwt").val();
-    console.log(value);
+    var value = $("#jwt").val();
+
     var connection = new signalR.HubConnectionBuilder().withUrl("https://localhost:5001/chathub",
-        { accessTokenFactory: () => value, EnableCrossDomain = true  }
+        { accessTokenFactory: () => value }
     ).build();
 
     connection.on("ReceiveMessage", function (message) {
@@ -13,7 +13,7 @@ jQuery(document).ready(function ($) {
     });
 
     connection.start().then(function () {
-        onnection.invoke("JoinGroup").catch(function (err) {
+        connection.invoke("JoinGroup").catch(function (err) {
             return console.error(err.toString());
         });
     }).catch(function (err) {

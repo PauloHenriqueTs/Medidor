@@ -43,6 +43,7 @@ namespace WebApi.Hubs
                 var meter = new EnergyMeter(command.Meter.serialId, userId, TypeOfEnergyMeter.House, null, command.Meter.count, command.Meter.Switch);
                 await repository.Update(meter);
             }
+            await Clients.Group(userId).SendAsync("ReceiveMessage", message);
         }
 
         public async Task ErrorMessage(string message)

@@ -72,7 +72,7 @@ namespace Amr.ViewModel
 
         private async Task GetCount(string id)
         {
-            await Task.Run(() =>
+            await Task.Run(async () =>
             {
                 var findMeter = meters.FirstOrDefault(m => m.serialId == id);
                 var command = new SwitchAmrCommand(id);
@@ -82,7 +82,7 @@ namespace Amr.ViewModel
                 SendCommand(json, findMeter.port);
                 var BeforeMeter = meters.FirstOrDefault(m => m.serialId == id);
 
-                Task t = Task.Run(() =>
+                Task t = Task.Run(async () =>
                 {
                     try
                     {
@@ -94,12 +94,12 @@ namespace Amr.ViewModel
                     }
                     catch (Exception) { }
 
-                    Debug.WriteLine("Deu Bom");
+                    await connection.InvokeAsync("ErrorMessage", String.Format("Switch Command Meter:{0}", id));
                 });
                 bool test = t.Wait(5000);
                 if (!test)
                 {
-                    Debug.WriteLine("Error   ");
+                    await connection.InvokeAsync("ErrorMessage", String.Format("Error Switch Meter:{0}", id));
                 }
             });
         }
