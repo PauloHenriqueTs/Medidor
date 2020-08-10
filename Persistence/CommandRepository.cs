@@ -22,5 +22,46 @@ namespace Persistence
             var commands = await _dbContext.MeterCommands.Where(c => c.UserId == userId).AsNoTracking().ToListAsync();
             return commands;
         }
+
+        public async Task Create(MeterCommand command)
+        {
+            try
+            {
+                await _dbContext.AddAsync(command);
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw new ArgumentException();
+            }
+        }
+
+        public async Task CreateSwitchCommand(string serialId, string userId)
+        {
+            try
+            {
+                var command = new MeterCommand(MeterCommandType.SwitchCommand, serialId, userId);
+                await _dbContext.AddAsync(command);
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw new ArgumentException();
+            }
+        }
+
+        public async Task GetCountCommand(string serialId, string userId)
+        {
+            try
+            {
+                var command = new MeterCommand(MeterCommandType.GetCountCommand, serialId, userId);
+                await _dbContext.AddAsync(command);
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw new ArgumentException();
+            }
+        }
     }
 }
