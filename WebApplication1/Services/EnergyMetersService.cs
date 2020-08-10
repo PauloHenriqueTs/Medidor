@@ -17,7 +17,7 @@ namespace WebApplication1.Services
 
         public EnergyMetersService(string Jwt)
         {
-            string baseUrl = "https://localhost:5001";
+            string baseUrl = "http://localhost:5001";
             client = new HttpClient();
             client.BaseAddress = new Uri(baseUrl);
 
@@ -28,7 +28,7 @@ namespace WebApplication1.Services
         {
             client = new HttpClient();
             client.DefaultRequestHeaders.Add("Authorization", String.Format("Bearer {0}", jwt.Replace("\"", string.Empty).Trim()));
-            var Response = await client.GetAsync("https://localhost:5001/api/EnergyMeters");
+            var Response = await client.GetAsync("http://localhost:5001/api/EnergyMeters");
             var ResponseAsString = await Response.Content.ReadAsStringAsync();
             var test = JsonConvert.DeserializeObject<IEnumerable<EnergyMeter>>(ResponseAsString);
             return test.ToList();
@@ -38,7 +38,7 @@ namespace WebApplication1.Services
         {
             client = new HttpClient();
             client.DefaultRequestHeaders.Add("Authorization", String.Format("Bearer {0}", jwt.Replace("\"", string.Empty).Trim()));
-            var Response = await client.GetAsync(String.Format("https://localhost:5001/api/EnergyMeters/{0}", Id));
+            var Response = await client.GetAsync(String.Format("http://localhost:5001/api/EnergyMeters/{0}", Id));
             var ResponseAsString = await Response.Content.ReadAsStringAsync();
             var test = JsonConvert.DeserializeObject<EnergyMeter>(ResponseAsString);
             return test;
@@ -48,7 +48,7 @@ namespace WebApplication1.Services
         {
             client = new HttpClient();
             client.DefaultRequestHeaders.Add("Authorization", String.Format("Bearer {0}", jwt.Replace("\"", string.Empty).Trim()));
-            var Response = await client.PostAsJsonAsync("https://localhost:5001/api/EnergyMeters", model);
+            var Response = await client.PostAsJsonAsync("http://localhost:5001/api/EnergyMeters", model);
             return Response;
         }
 
@@ -56,7 +56,7 @@ namespace WebApplication1.Services
         {
             client = new HttpClient();
             client.DefaultRequestHeaders.Add("Authorization", String.Format("Bearer {0}", jwt.Replace("\"", string.Empty).Trim()));
-            var Response = await client.PostAsJsonAsync("https://localhost:5001/api/EnergyMeters/getCount", serialId);
+            var Response = await client.PostAsJsonAsync("http://localhost:5001/api/EnergyMeters/getCount", serialId);
             return Response;
         }
 
@@ -64,7 +64,7 @@ namespace WebApplication1.Services
         {
             client = new HttpClient();
             client.DefaultRequestHeaders.Add("Authorization", String.Format("Bearer {0}", jwt.Replace("\"", string.Empty).Trim()));
-            var Response = await client.PutAsJsonAsync("https://localhost:5001/api/EnergyMeters", model);
+            var Response = await client.PutAsJsonAsync("http://localhost:5001/api/EnergyMeters", model);
             return Response;
         }
 
@@ -72,7 +72,7 @@ namespace WebApplication1.Services
         {
             client = new HttpClient();
             client.DefaultRequestHeaders.Add("Authorization", String.Format("Bearer {0}", jwt.Replace("\"", string.Empty).Trim()));
-            var Response = await client.PostAsJsonAsync("https://localhost:5001/api/EnergyMeters/switch", serialId);
+            var Response = await client.PostAsJsonAsync("http://localhost:5001/api/EnergyMeters/switch", serialId);
             return Response;
         }
 
@@ -80,7 +80,7 @@ namespace WebApplication1.Services
         {
             client = new HttpClient();
             client.DefaultRequestHeaders.Add("Authorization", String.Format("Bearer {0}", jwt.Replace("\"", string.Empty).Trim()));
-            var Response = await client.DeleteAsync(String.Format("https://localhost:5001/api/EnergyMeters/{0}", serialId));
+            var Response = await client.DeleteAsync(String.Format("http://localhost:5001/api/EnergyMeters/{0}", serialId));
             return Response;
         }
     }

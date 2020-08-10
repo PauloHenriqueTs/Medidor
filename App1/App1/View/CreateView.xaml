@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="App1.View.CreateView"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+    <ContentPage.Content>
+        <StackLayout>
+            <Entry Placeholder="SerialId" Text="{Binding SerialId, Mode=TwoWay}" />
+
+            <Label Text="Type" />
+            <Picker ItemsSource="{Binding TypesMeter}" SelectedItem="{Binding SelectType}" />
+            <ListView
+                x:Name="testlist"
+                HasUnevenRows="True"
+                ItemsSource="{Binding MetersOfPole, Mode=TwoWay}">
+
+
+
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Entry Placeholder="MeterId" Text="{Binding MeterId, Mode=TwoWay}" />
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <Button
+                Command="{Binding AddMeterOfPoleCommand}"
+                IsVisible="{Binding IsPole}"
+                Text="AddMeter" />
+            <Button
+                BackgroundColor="Green"
+                Command="{Binding CreateCommand}"
+                Text="Create" />
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

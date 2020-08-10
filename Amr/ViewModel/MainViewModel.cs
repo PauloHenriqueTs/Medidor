@@ -113,7 +113,7 @@ namespace Amr.ViewModel
         private async Task signalr()
         {
             connection = new HubConnectionBuilder()
-             .WithUrl("https://localhost:5001/chathub",
+             .WithUrl("http://localhost:5001/chathub",
               options =>
               {
                   options.Headers.Add("Authorization", "Bearer " + Jwt);

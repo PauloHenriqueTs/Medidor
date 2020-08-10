@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="App1.View.MainView"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+    <ContentPage.Content>
+        <StackLayout>
+            <ListView
+                x:Name="testlist"
+                HasUnevenRows="True"
+                ItemsSource="{Binding Meters}">
+                <ListView.Header>
+                    <Grid BackgroundColor="Black">
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Label
+                            Grid.Column="0"
+                            FontSize="20"
+                            Text="SerialId"
+                            TextColor="White" />
+                        <Label
+                            Grid.Column="1"
+                            FontSize="20"
+                            Text="Count"
+                            TextColor="White" />
+                        <Label
+                            Grid.Column="2"
+                            FontSize="20"
+                            Text="isRunning"
+                            TextColor="White" />
+                        <Label
+                            Grid.Column="3"
+                            FontSize="20"
+                            TextColor="White" />
+
+                    </Grid>
+                </ListView.Header>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Grid>
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0" Text="{Binding SerialId}" />
+                                <Label Grid.Column="1" Text="{Binding Count}" />
+                                <Label Grid.Column="2" Text="{Binding SwitchState}" />
+                                <Button
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    Command="{Binding UpdateCommand}"
+                                    Text="Update" />
+                                <Button
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Command="{Binding GetCountCommand}"
+                                    Text="GetCount" />
+                                <Button
+                                    Grid.Row="1"
+                                    Grid.Column="2"
+                                    Command="{Binding SwitchCommand}"
+                                    Text="Switch" />
+                                <Button
+                                    Grid.Row="1"
+                                    Grid.Column="3"
+                                    Command="{Binding DeleteCommand}"
+                                    Text="Delete" />
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <Button
+                Grid.Row="1"
+                Grid.Column="3"
+                BackgroundColor="Green"
+                Command="{Binding CreateCommand}"
+                Text="Create" />
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
