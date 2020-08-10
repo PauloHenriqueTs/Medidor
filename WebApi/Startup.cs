@@ -99,6 +99,18 @@ namespace WebApi
 
             services.AddScoped<ApplicationDbContext>();
 
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(
+                                  builder =>
+                                  {
+                                      builder.WithOrigins("http://localhost:5000")
+                                                          .AllowAnyHeader()
+                                                          .AllowAnyMethod()
+                                                          .AllowCredentials();
+                                  });
+            });
+
             services.AddControllers();
             services.AddSignalR();
             services.AddSwaggerGen(c =>
@@ -154,6 +166,8 @@ namespace WebApi
             });
 
             app.UseRouting();
+
+            app.UseCors();
 
             app.UseAuthentication();
             app.UseAuthorization();

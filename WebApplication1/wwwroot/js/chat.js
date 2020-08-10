@@ -6,7 +6,7 @@ jQuery(document).ready(function ($) {
     errorSignalr.hide();
     var value = $("#jwt").val();
 
-    var connection = new signalR.HubConnectionBuilder().withUrl("https://localhost:5001/chathub",
+    var connection = new signalR.HubConnectionBuilder().withUrl("http://localhost:5001/chathub",
         { accessTokenFactory: () => value }
     ).build();
 
