@@ -37,7 +37,7 @@ namespace App1.ViewModel
             if (response.IsSuccessStatusCode)
             {
                 var meters = await Service.GetAll();
-                await Navigation.PushAsync(new MainView(new MainViewModel(jwt, meters)));
+                await Navigation.PushAsync(new MainView(new MainViewModel(Service, meters)));
             }
         }
 

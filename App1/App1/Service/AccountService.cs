@@ -1,4 +1,5 @@
-﻿using App1.ViewModel;
+﻿using App1.Service;
+using App1.ViewModel;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,7 @@ namespace App1.Services
         {
             ;
 
-            string baseUrl = "https://6e186bbfbe66.ngrok.io";
+            string baseUrl = Settings.getUrl();
             client = new HttpClient();
             client.BaseAddress = new Uri(baseUrl);
             var contentType = new MediaTypeWithQualityHeaderValue("application/json");

@@ -11,7 +11,7 @@
             <Entry Placeholder="SerialId" Text="{Binding SerialId, Mode=TwoWay}" />
 
             <Label Text="Type" />
-            <Picker ItemsSource="{Binding TypesMeter}" SelectedItem="{Binding SelectType}" />
+
             <Picker ItemsSource="{Binding TypesMeter}" SelectedItem="{Binding SelectType}" />
             <ListView
                 x:Name="testlist"

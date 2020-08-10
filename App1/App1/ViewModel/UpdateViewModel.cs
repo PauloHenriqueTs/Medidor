@@ -14,14 +14,14 @@ namespace App1.ViewModel
 {
     public class UpdateViewModel : ViewModel
     {
-        private string jwt;
+        
         private EnergyMetersService Service;
 
-        public UpdateViewModel(string jwt, MeterViewModel meter, EnergyMetersService service)
+        public UpdateViewModel( MeterViewModel meter, EnergyMetersService service)
         {
             SerialId = meter.SerialId;
             Service = service;
-            this.jwt = jwt;
+            
             AddMeterOfPoleCommand = new Command(() => AddMeterOfPole(), () => true);
             UpdateCommand = new Command(async () => await Update(), () => true);
         }
@@ -38,7 +38,7 @@ namespace App1.ViewModel
             if (response.IsSuccessStatusCode)
             {
                 var meters = await Service.GetAll();
-                await Navigation.PushAsync(new MainView(new MainViewModel(jwt, meters)));
+                await Navigation.PushAsync(new MainView(new MainViewModel(Service, meters)));
             }
         }
 
