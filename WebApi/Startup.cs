@@ -116,18 +116,18 @@ namespace WebApi
                     Type = SecuritySchemeType.ApiKey
                 });
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement {
-   {
-     new OpenApiSecurityScheme
-     {
-       Reference = new OpenApiReference
-       {
-         Type = ReferenceType.SecurityScheme,
-         Id = "Bearer"
-       }
-      },
-      new string[] { }
-    }
-  });
+                       {
+                         new OpenApiSecurityScheme
+                         {
+                           Reference = new OpenApiReference
+                           {
+                             Type = ReferenceType.SecurityScheme,
+                             Id = "Bearer"
+                           }
+                          },
+                          new string[] { }
+                        }
+                      });
             });
 
             services.AddScoped<EnergyMeterRepository, EnergyMeterRepository>();
@@ -151,12 +151,6 @@ namespace WebApi
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-            });
-
-            app.UseCors(builder =>
-            {
-                builder.WithOrigins("http://localhost:5000")
-                    .AllowAnyHeader().AllowAnyMethod().AllowCredentials();
             });
 
             app.UseRouting();
