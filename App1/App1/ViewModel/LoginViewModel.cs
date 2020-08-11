@@ -32,7 +32,7 @@ namespace App1.ViewModel
                 var Token = await response.Content.ReadAsStringAsync();
                 var service = new EnergyMetersService(Token);
                 var meters = await service.GetAll();
-                await Navigation.PushAsync(new MainView(new MainViewModel(Token, meters)));
+                await Navigation.PushAsync(new MainView(new MainViewModel(service, meters)));
             }
         }
 

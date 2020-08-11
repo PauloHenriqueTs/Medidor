@@ -1,27 +1,30 @@
 ﻿using App1.Dto.ValueObject;
-using Newtonsoft.Json;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Text;
 
 namespace App1.Dto
 {
     public class EnergyMeter
     {
-        [JsonConstructor]
+        [Newtonsoft.Json.JsonConstructor]
         public EnergyMeter(string serialId, string userId, TypeOfEnergyMeter type, List<MeterOfPole> meters, string count, bool switchState)
         {
             SerialId = serialId;
             UserId = userId;
             Type = type;
-            if(Meters == null) {
-                Meters = new List<MeterOfPole>();
-            }else
+            if ( meters ==null|| !meters.Any() )
             {
-                Meters = meters; 
+                Meters = new List<MeterOfPole> { new MeterOfPole { MeterId="-1"} };
             }
- 
+            else
+            {
+                Meters = meters;
+            }
+
             Count = count;
             SwitchState = switchState;
         }
@@ -32,8 +35,7 @@ namespace App1.Dto
 
         public TypeOfEnergyMeter Type { get; set; }
 
-       
-        public List<MeterOfPole> Meters { get; set; }
+        public List<MeterOfPole> Meters { get; set; } = new List<MeterOfPole>();
 
         public string Count { get; set; }
 

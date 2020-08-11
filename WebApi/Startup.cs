@@ -99,16 +99,17 @@ namespace WebApi
 
             services.AddScoped<ApplicationDbContext>();
 
-            services.AddCors(options => options.AddPolicy("CorsPolicy", builder =>
+            services.AddCors(options =>
             {
-                builder
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .WithOrigins("http://localhost:5000")
-                    .AllowCredentials();
-            }));
-
-
+                options.AddDefaultPolicy(
+                                  builder =>
+                                  {
+                                      builder.WithOrigins("http://localhost:5000")
+                                                          .AllowAnyHeader()
+                                                          .AllowAnyMethod()
+                                                          .AllowCredentials();
+                                  });
+            });
 
             services.AddControllers();
             services.AddSignalR();
@@ -155,8 +156,6 @@ namespace WebApi
 
             app.UseHttpsRedirection();
 
-            app.UseCors("CorsPolicy");
-
             app.UseSwagger();
 
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
@@ -167,6 +166,8 @@ namespace WebApi
             });
 
             app.UseRouting();
+
+            app.UseCors();
 
             app.UseAuthentication();
             app.UseAuthorization();
@@ -179,7 +180,6 @@ namespace WebApi
                     options.Transports =
                         HttpTransportType.WebSockets |
                         HttpTransportType.LongPolling;
-                    
                 });
             });
         }

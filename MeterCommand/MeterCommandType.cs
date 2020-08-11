@@ -8,6 +8,8 @@ namespace Command
     {
         CreateMeterCommand,
         UpdateMeterCommand,
-        DeleteMeterCommand
+        DeleteMeterCommand,
+        GetCountCommand,
+        SwitchCommand
     }
 }

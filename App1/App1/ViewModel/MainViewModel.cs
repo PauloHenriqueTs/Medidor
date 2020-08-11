@@ -15,15 +15,21 @@ namespace App1.ViewModel
     {
         private EnergyMetersService service;
 
-        public MainViewModel(string jwt, List<EnergyMeter> energyMeters)
+        public MainViewModel(EnergyMetersService Service, List<EnergyMeter> energyMeters)
         {
-            Jwt = jwt;
-            service = new EnergyMetersService(Jwt);
+            service = Service;
             foreach (var item in energyMeters)
             {
-                Meters.Add(new MeterViewModel(item, service, this));
+                var meterViewModel = new MeterViewModel(item, service, this);
+                meterViewModel.Navigation = this.Navigation;
+                Meters.Add(meterViewModel);
             }
             CreateCommand = new Command(async () => await Create(), () => true);
+        }
+
+        public async Task NavigateToUpdate(MeterViewModel viewModel)
+        {
+            await Navigation.PushAsync(new UpdateView(new UpdateViewModel(viewModel, service)));
         }
 
         private async Task Create()
@@ -34,10 +40,5 @@ namespace App1.ViewModel
         public ICommand CreateCommand { get; set; }
         private string Jwt { get; set; }
         public ObservableCollection<MeterViewModel> Meters { get; set; } = new ObservableCollection<MeterViewModel>();
-
-        public string getJwt()
-        {
-            return this.Jwt;
-        }
     }
 }

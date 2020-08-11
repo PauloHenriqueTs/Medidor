@@ -1,5 +1,4 @@
-﻿using Command;
-using Entities;
+﻿using Entities;
 using Entities.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -24,7 +23,6 @@ namespace Persistence.DAO
             {
                 var dao = new EnergyMeterDao(energyMeter);
                 await _dbContext.AddAsync(dao);
-                await _dbContext.MeterCommands.AddAsync(new MeterCommand(MeterCommandType.CreateMeterCommand, dao.SerialId, dao.UserId));
                 await _dbContext.SaveChangesAsync();
             }
             catch (Exception)
@@ -65,7 +63,6 @@ namespace Persistence.DAO
                     _dbContext.EnergyMetersDaos.Attach(dao);
                 }
                 _dbContext.EnergyMetersDaos.Remove(dao);
-                await _dbContext.MeterCommands.AddAsync(new MeterCommand(MeterCommandType.DeleteMeterCommand, dao.SerialId, dao.UserId));
                 await _dbContext.SaveChangesAsync();
             }
         }
@@ -75,7 +72,6 @@ namespace Persistence.DAO
             var dao = await _dbContext.EnergyMetersDaos.FindAsync(SerialId);
             if (dao != null)
             {
-                await _dbContext.MeterCommands.AddAsync(new MeterCommand(MeterCommandType.DeleteMeterCommand, dao.SerialId, dao.UserId));
                 if (_dbContext.Entry(dao).State == EntityState.Detached)
                 {
                     _dbContext.EnergyMetersDaos.Attach(dao);
@@ -109,7 +105,6 @@ namespace Persistence.DAO
 
                 _dbContext.Entry(dao).State = EntityState.Modified;
 
-                await _dbContext.MeterCommands.AddAsync(new MeterCommand(MeterCommandType.UpdateMeterCommand, dao.SerialId, dao.UserId));
                 await _dbContext.SaveChangesAsync();
             }
         }

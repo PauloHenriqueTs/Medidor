@@ -1,4 +1,5 @@
-﻿using App1.ViewModel;
+﻿using App1.Service;
+using App1.ViewModel;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -17,9 +18,9 @@ namespace App1.Services
 
         public AccountService()
         {
+            ;
 
-
-            string baseUrl = Settings.baseUrl();
+            string baseUrl = Settings.getUrl();
             client = new HttpClient();
             client.BaseAddress = new Uri(baseUrl);
             var contentType = new MediaTypeWithQualityHeaderValue("application/json");

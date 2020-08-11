@@ -11,8 +11,13 @@ using Microsoft.AspNetCore.SignalR;
 using Persistence.DAO;
 using WebApi.Dto;
 using WebApi.Hubs;
-using WebApi.Command;
+
 using System.Text.Json;
+using Persistence;
+using WebApi.Command;
+using Command;
+using MeterCommand = WebApi.Command.MeterCommand;
+using MeterCommandType = WebApi.Command.MeterCommandType;
 
 namespace WebApi.Controllers
 {
@@ -24,11 +29,13 @@ namespace WebApi.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
 
         private readonly EnergyMeterRepository repository;
+        private readonly CommandRepository commandRepository;
 
         private readonly IHubContext<ChatHub> _chatHubContext;
 
-        public EnergyMetersController(UserManager<ApplicationUser> userManager, EnergyMeterRepository energyMeterRepository, IHubContext<ChatHub> chatHubContext)
+        public EnergyMetersController(CommandRepository commandRepository, UserManager<ApplicationUser> userManager, EnergyMeterRepository energyMeterRepository, IHubContext<ChatHub> chatHubContext)
         {
+            this.commandRepository = commandRepository;
             _userManager = userManager;
             repository = energyMeterRepository;
             _chatHubContext = chatHubContext;
@@ -85,6 +92,7 @@ namespace WebApi.Controllers
             var value = new MeterCommand { value = meter, type = MeterCommandType.Switch };
             var message = Newtonsoft.Json.JsonConvert.SerializeObject(value);
             await _chatHubContext.Clients.Group(userId).SendAsync("ReceiveMessage", message);
+            await commandRepository.CreateSwitchCommand(serialId, userId);
             return Ok();
         }
 
@@ -101,6 +109,7 @@ namespace WebApi.Controllers
             var value = new MeterCommand { value = meter, type = MeterCommandType.Count };
             var message = Newtonsoft.Json.JsonConvert.SerializeObject(value);
             await _chatHubContext.Clients.Group(userId).SendAsync("ReceiveMessage", message);
+            await commandRepository.GetCountCommand(serialId, userId);
             return Ok();
         }
 

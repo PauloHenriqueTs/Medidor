@@ -1,5 +1,5 @@
 ﻿using App1.Dto;
-
+using App1.Service;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -16,7 +16,7 @@ namespace App1.Services
 
         public EnergyMetersService(string Jwt)
         {
-            string baseUrl = Settings.baseUrl();
+            string baseUrl = Settings.getUrl();
             client = new HttpClient();
             client.BaseAddress = new Uri(baseUrl);
 
@@ -33,7 +33,7 @@ namespace App1.Services
         {
             var Response = await client.GetAsync("/api/EnergyMeters");
             var ResponseAsString = await Response.Content.ReadAsStringAsync();
-            var test = JsonConvert.DeserializeObject<IEnumerable<EnergyMeter>>(ResponseAsString, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+            var test = JsonConvert.DeserializeObject<IEnumerable<EnergyMeter>>(ResponseAsString);
 
             return test.ToList();
         }

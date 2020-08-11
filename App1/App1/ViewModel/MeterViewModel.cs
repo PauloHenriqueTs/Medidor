@@ -16,14 +16,12 @@ namespace App1.ViewModel
     {
         private EnergyMetersService service;
         private MainViewModel mainView;
-        private string jwt;
 
         public MeterViewModel(EnergyMeter item, EnergyMetersService Service, MainViewModel MainView)
         {
-            jwt = mainView.getJwt();
-            
             mainView = MainView;
             service = Service;
+            Type = item.Type;
             SerialId = item.SerialId;
             Count = item.Count;
             UserId = item.UserId;
@@ -40,7 +38,8 @@ namespace App1.ViewModel
 
         private async Task Update()
         {
-            await Navigation.PushAsync(new UpdateView(new UpdateViewModel(jwt, this, service)));
+            await mainView.NavigateToUpdate(this);
+            // await Navigation.PushAsync(new UpdateView(new UpdateViewModel(this, service)));
         }
 
         private async Task GetCount()
@@ -102,7 +101,7 @@ namespace App1.ViewModel
             }
         }
 
-        private TypeOfEnergyMeter _Type { get; set; }
+        public TypeOfEnergyMeter Type { get; set; }
 
         public ObservableCollection<MeterOfPoleViewModel> MetersOfPole { get; set; } = new ObservableCollection<MeterOfPoleViewModel>();
 
