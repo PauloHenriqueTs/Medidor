@@ -16,7 +16,7 @@ namespace App1.Services
 
         public EnergyMetersService(string Jwt)
         {
-            string baseUrl = "https://6e186bbfbe66.ngrok.io";
+            string baseUrl = Settings.baseUrl();
             client = new HttpClient();
             client.BaseAddress = new Uri(baseUrl);
 

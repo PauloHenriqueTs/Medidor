@@ -17,9 +17,9 @@ namespace App1.Services
 
         public AccountService()
         {
-            ;
 
-            string baseUrl = "https://6e186bbfbe66.ngrok.io";
+
+            string baseUrl = Settings.baseUrl();
             client = new HttpClient();
             client.BaseAddress = new Uri(baseUrl);
             var contentType = new MediaTypeWithQualityHeaderValue("application/json");
